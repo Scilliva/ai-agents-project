@@ -1,0 +1,689 @@
+{
+  "meta": {
+    "model": "qwen3:4b-instruct",
+    "recorded_at": "2026-08-10",
+    "machine": "Apple M4, 16 GB, Ollama, one request at a time",
+    "runs_per_cell": 12,
+    "seed_at_temperature_0": 42,
+    "what_to_notice": [
+      "At temperature 0 every cell is 1 distinct output out of 12. Served this way, the model is reproducible.",
+      "At temperature 1 the same prompts are not. Determinism is a setting here, not a property of the model.",
+      "Latency tracks output length far more than prompt length. The reasoning prompt costs about 35 times the closed one.",
+      "This recording excludes the cold start. Measure that yourself, it is the largest number you will see today."
+    ]
+  },
+  "cells": {
+    "closed_short|t00": {
+      "prompt": "What is the capital of Luxembourg? Answer in one word.",
+      "temperature": 0.0,
+      "runs": [
+        {
+          "text": "Luxembourg",
+          "latency_s": 5.565,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 5.557,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 5.558,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 5.558,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.173,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.174,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.174,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.176,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.174,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.175,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.175,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.176,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        }
+      ],
+      "distinct": 1,
+      "n": 12,
+      "median_latency_s": 0.175,
+      "min_latency_s": 0.173,
+      "max_latency_s": 5.565,
+      "mean_chars": 10
+    },
+    "closed_short|t10": {
+      "prompt": "What is the capital of Luxembourg? Answer in one word.",
+      "temperature": 1.0,
+      "runs": [
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.178,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.173,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.173,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.176,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.175,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.174,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.175,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.175,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.175,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.175,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.175,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        },
+        {
+          "text": "Luxembourg",
+          "latency_s": 0.176,
+          "prompt_tokens": 20,
+          "completion_tokens": 3
+        }
+      ],
+      "distinct": 1,
+      "n": 12,
+      "median_latency_s": 0.175,
+      "min_latency_s": 0.173,
+      "max_latency_s": 0.178,
+      "mean_chars": 10
+    },
+    "open_short|t00": {
+      "prompt": "In one sentence, why is Luxembourg City important to the European Union?",
+      "temperature": 0.0,
+      "runs": [
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.074,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.074,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.075,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.068,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.073,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.067,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.075,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.078,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.07,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.069,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.071,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.069,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        }
+      ],
+      "distinct": 1,
+      "n": 12,
+      "median_latency_s": 1.072,
+      "min_latency_s": 1.067,
+      "max_latency_s": 1.078,
+      "mean_chars": 194
+    },
+    "open_short|t10": {
+      "prompt": "In one sentence, why is Luxembourg City important to the European Union?",
+      "temperature": 1.0,
+      "runs": [
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.067,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.072,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.069,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and policy-making.",
+          "latency_s": 1.067,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and policy-making.",
+          "latency_s": 1.075,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Parliament and hosts key EU institutions, making it a central hub for European political decision-making and governance.",
+          "latency_s": 1.094,
+          "prompt_tokens": 22,
+          "completion_tokens": 38
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Parliament and hosts key EU institutions, making it a central hub for European political decision-making and governance.",
+          "latency_s": 1.099,
+          "prompt_tokens": 22,
+          "completion_tokens": 38
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.072,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Parliament and hosts key EU institutions, making it a central hub for European governance and decision-making.",
+          "latency_s": 1.067,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Parliament and hosts key EU institutions, making it a central hub for European political decision-making.",
+          "latency_s": 1.042,
+          "prompt_tokens": 22,
+          "completion_tokens": 36
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Parliament and hosts key EU institutions, making it a central hub for European political decision-making and governance.",
+          "latency_s": 1.093,
+          "prompt_tokens": 22,
+          "completion_tokens": 38
+        },
+        {
+          "text": "Luxembourg City is important to the European Union because it is the seat of the European Commission and hosts key EU institutions, making it a central hub for EU governance and decision-making.",
+          "latency_s": 1.073,
+          "prompt_tokens": 22,
+          "completion_tokens": 37
+        }
+      ],
+      "distinct": 5,
+      "n": 12,
+      "median_latency_s": 1.072,
+      "min_latency_s": 1.042,
+      "max_latency_s": 1.099,
+      "mean_chars": 198
+    },
+    "open_list|t00": {
+      "prompt": "List three responsibilities of a Luxembourg commune administration. Be concise.",
+      "temperature": 0.0,
+      "runs": [
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, waste management)  \n3. Issuance of permits and regulations for residents and businesses",
+          "latency_s": 1.094,
+          "prompt_tokens": 20,
+          "completion_tokens": 38
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, waste management)  \n3. Issuance of permits and regulations for residents and businesses",
+          "latency_s": 1.099,
+          "prompt_tokens": 20,
+          "completion_tokens": 38
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, waste management)  \n3. Issuance of permits and regulations for residents and businesses",
+          "latency_s": 1.101,
+          "prompt_tokens": 20,
+          "completion_tokens": 38
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, waste management)  \n3. Issuance of permits and regulations for residents and businesses",
+          "latency_s": 1.092,
+          "prompt_tokens": 20,
+          "completion_tokens": 38
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, waste management)  \n3. Issuance of permits and regulations for residents and businesses",
+          "latency_s": 1.098,
+          "prompt_tokens": 20,
+          "completion_tokens": 38
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, waste management)  \n3. Issuance of permits and regulations for residents and businesses",
+          "latency_s": 1.093,
+          "prompt_tokens": 20,
+          "completion_tokens": 38
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, waste management)  \n3. Issuance of permits and regulations for residents and businesses",
+          "latency_s": 1.098,
+          "prompt_tokens": 20,
+          "completion_tokens": 38
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, waste management)  \n3. Issuance of permits and regulations for residents and businesses",
+          "latency_s": 1.097,
+          "prompt_tokens": 20,
+          "completion_tokens": 38
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, waste management)  \n3. Issuance of permits and regulations for residents and businesses",
+          "latency_s": 1.095,
+          "prompt_tokens": 20,
+          "completion_tokens": 38
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, waste management)  \n3. Issuance of permits and regulations for residents and businesses",
+          "latency_s": 1.093,
+          "prompt_tokens": 20,
+          "completion_tokens": 38
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, waste management)  \n3. Issuance of permits and regulations for residents and businesses",
+          "latency_s": 1.098,
+          "prompt_tokens": 20,
+          "completion_tokens": 38
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, waste management)  \n3. Issuance of permits and regulations for residents and businesses",
+          "latency_s": 1.103,
+          "prompt_tokens": 20,
+          "completion_tokens": 38
+        }
+      ],
+      "distinct": 1,
+      "n": 12,
+      "median_latency_s": 1.098,
+      "min_latency_s": 1.092,
+      "max_latency_s": 1.103,
+      "mean_chars": 189
+    },
+    "open_list|t10": {
+      "prompt": "List three responsibilities of a Luxembourg commune administration. Be concise.",
+      "temperature": 1.0,
+      "runs": [
+        {
+          "text": "1. Local governance and policy implementation  \n2. Public services (e.g., waste management, utilities)  \n3. Urban planning and land use regulation",
+          "latency_s": 0.912,
+          "prompt_tokens": 20,
+          "completion_tokens": 31
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Public services (e.g., waste management, utilities)  \n3. Urban planning and land use regulation",
+          "latency_s": 0.909,
+          "prompt_tokens": 20,
+          "completion_tokens": 31
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Public services (e.g., waste management, roads, utilities)  \n3. Urban planning and land use regulation",
+          "latency_s": 0.965,
+          "prompt_tokens": 20,
+          "completion_tokens": 33
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Public services (e.g., waste management, sanitation)  \n3. Urban planning and zoning regulations",
+          "latency_s": 0.885,
+          "prompt_tokens": 20,
+          "completion_tokens": 30
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, utilities)  \n3. Issuance of permits and local regulations enforcement",
+          "latency_s": 1.02,
+          "prompt_tokens": 20,
+          "completion_tokens": 35
+        },
+        {
+          "text": "1. Local governance and decision-making for municipal matters.  \n2. Maintenance of public infrastructure (e.g., roads, streets, public buildings).  \n3. Provision of public services (e.g., waste management, local policing, social services).",
+          "latency_s": 1.414,
+          "prompt_tokens": 20,
+          "completion_tokens": 50
+        },
+        {
+          "text": "1. Local governance and decision-making for municipal matters.  \n2. Maintenance of public infrastructure (e.g., roads, parks).  \n3. Issuance of permits and regulation of local activities.",
+          "latency_s": 1.178,
+          "prompt_tokens": 20,
+          "completion_tokens": 41
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, sewage)  \n3. Issuance of permits and regulations (e.g., building, zoning)",
+          "latency_s": 1.175,
+          "prompt_tokens": 20,
+          "completion_tokens": 41
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Public services delivery (e.g., waste management, utilities)  \n3. Maintenance of local infrastructure (e.g., roads, public spaces)",
+          "latency_s": 1.123,
+          "prompt_tokens": 20,
+          "completion_tokens": 39
+        },
+        {
+          "text": "1. Local governance and decision-making for municipal matters.  \n2. Maintenance of public infrastructure (e.g., roads, streets, public buildings).  \n3. Administration of local services (e.g., waste collection, public health, housing).",
+          "latency_s": 1.387,
+          "prompt_tokens": 20,
+          "completion_tokens": 49
+        },
+        {
+          "text": "1. Local governance and decision-making for communal affairs.  \n2. Maintenance of public infrastructure (e.g., roads, parks).  \n3. Issuance of permits and regulation of local activities.",
+          "latency_s": 1.175,
+          "prompt_tokens": 20,
+          "completion_tokens": 41
+        },
+        {
+          "text": "1. Local governance and policy implementation  \n2. Maintenance of public infrastructure (e.g., roads, streets)  \n3. Provision of public services (e.g., waste management, water supply)",
+          "latency_s": 1.153,
+          "prompt_tokens": 20,
+          "completion_tokens": 40
+        }
+      ],
+      "distinct": 11,
+      "n": 12,
+      "median_latency_s": 1.138,
+      "min_latency_s": 0.885,
+      "max_latency_s": 1.414,
+      "mean_chars": 178
+    },
+    "open_reasoning|t00": {
+      "prompt": "A resident asks whether they need a parking vignette if they park in a visitor bay. Explain what information you would need before answering, and why.",
+      "temperature": 0.0,
+      "runs": [
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   – Different cities, towns, or regions have different parking regulations. For example, a visitor bay in a university campus may have different rules than one in a residential neighborhood or a commercial district.\n\n2. **The definition and purpose of a \"visitor bay\"**  \n   – Is it a designated area for temporary, short-term parking for guests or visitors? Or is it part of a larger parking structure with specific access rules? Understanding the intended use helps determine if it's subject to regular parking fees or permits.\n\n3. **Whether the visitor bay is part of a regulated parking system**  \n   – Some areas require a vignette (a small sticker or fee) for all parking, including visitor parking, especially if it's within a zone that restricts access to residents or requires payment for use.",
+          "latency_s": 5.547,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   – Different cities, towns, or regions have different parking regulations. For example, a visitor bay in a university campus may have different rules than one in a residential neighborhood or a commercial district.\n\n2. **The definition and purpose of a \"visitor bay\"**  \n   – Is it a designated area for temporary, short-term parking for guests or visitors? Or is it part of a larger parking structure with specific access rules? Understanding the intended use helps determine if it's subject to regular parking fees or permits.\n\n3. **Whether the visitor bay is part of a regulated parking system**  \n   – Some areas require a vignette (a small sticker or fee) for all parking, including visitor parking, especially if it's within a zone that restricts access to residents or requires payment for use.",
+          "latency_s": 5.406,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   – Different cities, towns, or regions have different parking regulations. For example, a visitor bay in a university campus may have different rules than one in a residential neighborhood or a commercial district.\n\n2. **The definition and purpose of a \"visitor bay\"**  \n   – Is it a designated area for temporary, short-term parking for guests or visitors? Or is it part of a larger parking structure with specific access rules? Understanding the intended use helps determine if it's subject to regular parking fees or permits.\n\n3. **Whether the visitor bay is part of a regulated parking system**  \n   – Some areas require a vignette (a small sticker or fee) for all parking, including visitor parking, especially if it's within a zone that restricts access to residents or requires payment for use.",
+          "latency_s": 5.411,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   – Different cities, towns, or regions have different parking regulations. For example, a visitor bay in a university campus may have different rules than one in a residential neighborhood or a commercial district.\n\n2. **The definition and purpose of a \"visitor bay\"**  \n   – Is it a designated area for temporary, short-term parking for guests or visitors? Or is it part of a larger parking structure with specific access rules? Understanding the intended use helps determine if it's subject to regular parking fees or permits.\n\n3. **Whether the visitor bay is part of a regulated parking system**  \n   – Some areas require a vignette (a small sticker or fee) for all parking, including visitor parking, especially if it's within a zone that restricts access to residents or requires payment for use.",
+          "latency_s": 5.404,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   – Different cities, towns, or regions have different parking regulations. For example, a visitor bay in a university campus may have different rules than one in a residential neighborhood or a commercial district.\n\n2. **The definition and purpose of a \"visitor bay\"**  \n   – Is it a designated area for temporary, short-term parking for guests or visitors? Or is it part of a larger parking structure with specific access rules? Understanding the intended use helps determine if it's subject to regular parking fees or permits.\n\n3. **Whether the visitor bay is part of a regulated parking system**  \n   – Some areas require a vignette (a small sticker or fee) for all parking, including visitor parking, especially if it's within a zone that restricts access to residents or requires payment for use.",
+          "latency_s": 5.405,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   – Different cities, towns, or regions have different parking regulations. For example, a visitor bay in a university campus may have different rules than one in a residential neighborhood or a commercial district.\n\n2. **The definition and purpose of a \"visitor bay\"**  \n   – Is it a designated area for temporary, short-term parking for guests or visitors? Or is it part of a larger parking structure with specific access rules? Understanding the intended use helps determine if it's subject to regular parking fees or permits.\n\n3. **Whether the visitor bay is part of a regulated parking system**  \n   – Some areas require a vignette (a small sticker or fee) for all parking, including visitor parking, especially if it's within a zone that restricts access to residents or requires payment for use.",
+          "latency_s": 5.402,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   – Different cities, towns, or regions have different parking regulations. For example, a visitor bay in a university campus may have different rules than one in a residential neighborhood or a commercial district.\n\n2. **The definition and purpose of a \"visitor bay\"**  \n   – Is it a designated area for temporary, short-term parking for guests or visitors? Or is it part of a larger parking structure with specific access rules? Understanding the intended use helps determine if it's subject to regular parking fees or permits.\n\n3. **Whether the visitor bay is part of a regulated parking system**  \n   – Some areas require a vignette (a small sticker or fee) for all parking, including visitor parking, especially if it's within a zone that restricts access to residents or requires payment for use.",
+          "latency_s": 5.408,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   – Different cities, towns, or regions have different parking regulations. For example, a visitor bay in a university campus may have different rules than one in a residential neighborhood or a commercial district.\n\n2. **The definition and purpose of a \"visitor bay\"**  \n   – Is it a designated area for temporary, short-term parking for guests or visitors? Or is it part of a larger parking structure with specific access rules? Understanding the intended use helps determine if it's subject to regular parking fees or permits.\n\n3. **Whether the visitor bay is part of a regulated parking system**  \n   – Some areas require a vignette (a small sticker or fee) for all parking, including visitor parking, especially if it's within a zone that restricts access to residents or requires payment for use.",
+          "latency_s": 5.406,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   – Different cities, towns, or regions have different parking regulations. For example, a visitor bay in a university campus may have different rules than one in a residential neighborhood or a commercial district.\n\n2. **The definition and purpose of a \"visitor bay\"**  \n   – Is it a designated area for temporary, short-term parking for guests or visitors? Or is it part of a larger parking structure with specific access rules? Understanding the intended use helps determine if it's subject to regular parking fees or permits.\n\n3. **Whether the visitor bay is part of a regulated parking system**  \n   – Some areas require a vignette (a small sticker or fee) for all parking, including visitor parking, especially if it's within a zone that restricts access to residents or requires payment for use.",
+          "latency_s": 5.414,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   – Different cities, towns, or regions have different parking regulations. For example, a visitor bay in a university campus may have different rules than one in a residential neighborhood or a commercial district.\n\n2. **The definition and purpose of a \"visitor bay\"**  \n   – Is it a designated area for temporary, short-term parking for guests or visitors? Or is it part of a larger parking structure with specific access rules? Understanding the intended use helps determine if it's subject to regular parking fees or permits.\n\n3. **Whether the visitor bay is part of a regulated parking system**  \n   – Some areas require a vignette (a small sticker or fee) for all parking, including visitor parking, especially if it's within a zone that restricts access to residents or requires payment for use.",
+          "latency_s": 5.407,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   – Different cities, towns, or regions have different parking regulations. For example, a visitor bay in a university campus may have different rules than one in a residential neighborhood or a commercial district.\n\n2. **The definition and purpose of a \"visitor bay\"**  \n   – Is it a designated area for temporary, short-term parking for guests or visitors? Or is it part of a larger parking structure with specific access rules? Understanding the intended use helps determine if it's subject to regular parking fees or permits.\n\n3. **Whether the visitor bay is part of a regulated parking system**  \n   – Some areas require a vignette (a small sticker or fee) for all parking, including visitor parking, especially if it's within a zone that restricts access to residents or requires payment for use.",
+          "latency_s": 5.405,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   – Different cities, towns, or regions have different parking regulations. For example, a visitor bay in a university campus may have different rules than one in a residential neighborhood or a commercial district.\n\n2. **The definition and purpose of a \"visitor bay\"**  \n   – Is it a designated area for temporary, short-term parking for guests or visitors? Or is it part of a larger parking structure with specific access rules? Understanding the intended use helps determine if it's subject to regular parking fees or permits.\n\n3. **Whether the visitor bay is part of a regulated parking system**  \n   – Some areas require a vignette (a small sticker or fee) for all parking, including visitor parking, especially if it's within a zone that restricts access to residents or requires payment for use.",
+          "latency_s": 5.402,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        }
+      ],
+      "distinct": 1,
+      "n": 12,
+      "median_latency_s": 5.406,
+      "min_latency_s": 5.402,
+      "max_latency_s": 5.547,
+      "mean_chars": 1003
+    },
+    "open_reasoning|t10": {
+      "prompt": "A resident asks whether they need a parking vignette if they park in a visitor bay. Explain what information you would need before answering, and why.",
+      "temperature": 1.0,
+      "runs": [
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following key pieces of information:\n\n1. **The specific location and regulations of the visitor bay**:  \n   - Is the visitor bay located within a residential neighborhood, a campus, a city park, or a commercial area?  \n   - What are the official rules governing parking in that bay (e.g., does it allow only visitors, or can residents use it under certain conditions)?  \n   - Are there any bylaws or municipal regulations that distinguish between resident and visitor parking?\n\n2. **The definition of \"resident\" and \"visitor bay\"**:  \n   - What constitutes a \"resident\" in this context (e.g., ownership of a property, lease agreement, or duration of residency)?  \n   - Is a \"visitor bay\" designated for temporary use only, or is it open to residents under specific permissions?\n\n3. **Parking vignette requirements**:  \n   - Does the jurisdiction (",
+          "latency_s": 5.408,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction**:  \n   Different cities, towns, or regions have different parking regulations. For example, parking rules in London, Toronto, or New York City vary significantly. Knowing the exact location helps determine if there are local bylaws about visitor bays and parking permits.\n\n2. **Definition of a \"visitor bay\"**:  \n   Not all visitor bays are created equal. Some are designated for guests or temporary use, while others may be part of a larger public parking system. Understanding the purpose and usage rules of the bay is essential—some visitor bays may be restricted to non-residents or have specific access conditions.\n\n3. **Resident vs. visitor status**:  \n   Whether the resident is considered a \"resident\" under the local parking regulations (e.g., based on property ownership, residency duration, or official residency status) determines",
+          "latency_s": 5.409,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following key pieces of information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   – Different municipalities, cities, or districts have different parking regulations. For example, rules may vary between a city park, a university campus, or a private residential complex.  \n   – Visitor bays may be designated for specific purposes (e.g., public access, events, or temporary use), and these may have different rules than regular parking.\n\n2. **The official definition and status of a \"visitor bay\"**  \n   – Is it a designated area for temporary or short-term parking, or is it a permanent space?  \n   – Does it fall under a category that allows access without a vignette (e.g., visitor parking for guests, events, or emergencies)?\n\n3. **The parking policy of the property or building**  \n   – Does the property (e.g",
+          "latency_s": 5.401,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and regulations of the visitor bay**:  \n   Different areas (e.g., residential neighborhoods, universities, public parks, or commercial zones) have different rules. I need to know which property or facility the visitor bay is located on and what parking policies govern it.\n\n2. **Whether the visitor bay is designated for residents or general public use**:  \n   If the bay is only for visitors (e.g., guests, temporary access), it may not require a vignette. If it's open to residents as well, the rules may differ based on residency status.\n\n3. **Whether a parking vignette is required by local government or property management**:  \n   Some municipalities or private property owners mandate vignettes for all parking, regardless of bay type. I need to confirm if such a rule applies to visitor bays specifically.\n\n4. **The legal or",
+          "latency_s": 5.399,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following key pieces of information:\n\n1. **The specific location and rules of the visitor bay**:  \n   Different areas (e.g., residential communities, commercial zones, public parks) may have different regulations. Visitor bays are often designated for temporary or non-resident parking, and their rules may specify whether parking permits or vignettes are required, even for residents.\n\n2. **The jurisdiction or governing body**:  \n   Rules are typically enforced by local authorities (e.g., city, town, or property management). The rules may differ based on the region or municipality. For example, some areas require vignettes for all parking, while others may exempt certain categories (like residents) or allow access without a permit for visitor bays.\n\n3. **Whether the visitor bay is a \"resident-only\" or \"open to all\" bay**:  \n   If the bay is designated only for visitors,",
+          "latency_s": 5.391,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following key pieces of information:\n\n1. **The specific location and jurisdiction of the visitor bay**  \n   - Different cities, neighborhoods, or regions have different parking regulations. For example, a visitor bay in a residential area might be governed by local municipal rules, while a bay in a commercial district may have different requirements. Knowing the exact location helps determine if there are specific rules about visitor parking and vignettes.\n\n2. **Whether the visitor bay is designated for residents or is open to all users**  \n   - If the bay is exclusively for residents or guests, it may have different access rules. If it's open to the public, it may require a vignette for all vehicles, including visitors.\n\n3. **The definition and purpose of a \"parking vignette\" in this context**  \n   - A parking vignette is typically a small sticker or digital fee applied to a vehicle",
+          "latency_s": 5.412,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and regulations of the visitor bay**:  \n   - Is the visitor bay located within a residential property, a public facility, or a private development?  \n   - What are the official rules or bylaws governing access and parking in that bay?  \n   - Are there any posted signage or official policies that state who is permitted to park there?\n\n2. **The definition of a \"resident\" in this context**:  \n   - What constitutes a resident? For example, is it someone who owns a property, lives on-site, or has a valid residency permit?  \n   - Does the community have a definition of residency that includes long-term leases, or only homeownership?\n\n3. **The parking rules for visitor bays**:  \n   - Are visitor bays restricted to visitors only, and if so, are residents allowed to use them under certain conditions",
+          "latency_s": 5.4,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   – Different cities, towns, or regions have different parking regulations. For example, rules in London (UK), New York (USA), or Sydney (Australia) vary significantly. A visitor bay may be permitted under one set of rules but restricted under another.\n\n2. **The definition and purpose of a \"visitor bay\"**  \n   – Is it a designated area for guests, temporary visitors, or short-term parking? Are there specific rules about who is allowed to park there (e.g., only residents, only visitors, or with permits)?\n\n3. **Whether the visitor bay is within a residential zone or a commercial/urban area**  \n   – In some areas, visitor bays are exempt from standard parking fees or vignette requirements, especially if they are for public or guest use. In",
+          "latency_s": 5.398,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following key pieces of information:\n\n1. **The specific location and jurisdiction of the property**  \n   - Different cities, towns, or neighborhoods have different parking regulations. For example, a visitor bay in a residential area may be governed by local municipal rules, while a university or hotel might have its own policies.  \n   - Why it matters: Parking rules vary significantly by location, and a visitor bay may be exempt or require a vignette depending on the governing authority.\n\n2. **Definition and status of the \"visitor bay\"**  \n   - Is the visitor bay officially designated for visitors only?  \n   - Is it a temporary or permanent feature?  \n   - Does it have specific access conditions (e.g., limited to certain vehicles, time periods, or types of users)?  \n   - Why it matters: If it’s only for visitors and not open to residents, then a resident",
+          "latency_s": 5.411,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following key pieces of information:\n\n1. **The specific location and jurisdiction of the property or area**  \n   - Different cities, towns, or neighborhoods have different parking regulations. For example, a visitor bay in a university campus may have different rules than one in a residential neighborhood or a commercial district.\n\n2. **The official definition and purpose of a \"visitor bay\"**  \n   - Is it a designated area for guests only, or does it allow any visitor regardless of residency?  \n   - Does it have a legal status that exempts certain vehicles (like residents or emergency vehicles) from parking fees or vignettes?\n\n3. **The parking policy of the property or organization managing the bay**  \n   - Does the property (e.g., a hospital, university, or housing complex) have a policy stating that residents or visitors must have a vignette to park in visitor bays?",
+          "latency_s": 5.422,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and rules of the visitor bay**:  \n   - Is the visitor bay located within a residential area, a commercial zone, or a public facility (like a hospital or university)?  \n   - What are the official parking regulations for that bay? For example, does it allow only visitors, or does it have specific access criteria?\n\n2. **Whether the bay is designated for visitors only or for all vehicles**:  \n   - If it’s strictly for visitors (e.g., guests, contractors), then residents may not be permitted to use it at all, regardless of a vignette.  \n   - If it's open to residents, the rules may differ.\n\n3. **Parking policy of the governing body or property owner**:  \n   - Does the property (e.g., a housing complex, office building) have a policy stating that residents must have a",
+          "latency_s": 5.412,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        },
+        {
+          "text": "Before answering whether a resident needs a parking vignette to park in a visitor bay, I would need the following information:\n\n1. **The specific location and jurisdiction of the parking facility**:  \n   Different areas (e.g., city, town, neighborhood) may have different parking regulations. For example, some cities have designated visitor bays that are only accessible to visitors, while others may require a vignette regardless of visitor status.\n\n2. **The definition and rules for \"visitor bay\" in that location**:  \n   Not all visitor bays are the same. Some are temporary or reserved only for guests, while others may be open to all vehicles under specific conditions. Knowing whether the bay is restricted to visitors or allows general public access is essential.\n\n3. **Whether the resident is considered a \"resident\" under local policy**:  \n   Some areas have rules that allow residents to park in visitor bays without a vignette, while non-residents or guests are required to pay. Clarifying whether",
+          "latency_s": 5.4,
+          "prompt_tokens": 38,
+          "completion_tokens": 200
+        }
+      ],
+      "distinct": 12,
+      "n": 12,
+      "median_latency_s": 5.405,
+      "min_latency_s": 5.391,
+      "max_latency_s": 5.422,
+      "mean_chars": 973
+    }
+  }
+}

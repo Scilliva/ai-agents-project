@@ -1,0 +1,13 @@
+pyproject.toml
+ai_agents_project.egg-info/PKG-INFO
+ai_agents_project.egg-info/SOURCES.txt
+ai_agents_project.egg-info/dependency_links.txt
+ai_agents_project.egg-info/requires.txt
+ai_agents_project.egg-info/top_level.txt
+project/__init__.py
+project/contracts.py
+project/fixtures.py
+project/models.py
+project/prices.py
+project/trace.py
+project/verify.py

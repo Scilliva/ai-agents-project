@@ -1,0 +1,18 @@
+# Makes `import project` work from any script in your repository, however
+# you run it. Copy this file to the root of your repository next to the
+# project/ package and run `pip install -e .` once inside your venv. The
+# install is editable, so edits to project/ take effect without reinstalling.
+
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-agents-project"
+version = "0.1.0"
+description = "BPINFOR-132 project spine and the fourteen practical sessions built on it"
+requires-python = ">=3.10"
+dependencies = ["pydantic>=2.9,<3"]
+
+[tool.setuptools]
+packages = ["project"]

@@ -1,0 +1,10 @@
+# Week 1. Everything runs locally, so there is no provider SDK to pay for
+# and no key to leak. The `openai` package is here because the local server
+# speaks the OpenAI wire format, which is also what Pydantic AI will use
+# from week 5, so nothing underneath changes when the framework arrives.
+
+openai>=1.60
+pydantic>=2.9
+
+# Used by the spine's test suite and from week 10 onward as the gate.
+pytest>=8.0

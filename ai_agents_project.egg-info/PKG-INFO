@@ -1,0 +1,6 @@
+Metadata-Version: 2.4
+Name: ai-agents-project
+Version: 0.1.0
+Summary: BPINFOR-132 project spine and the fourteen practical sessions built on it
+Requires-Python: >=3.10
+Requires-Dist: pydantic<3,>=2.9
