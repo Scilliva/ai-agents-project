@@ -54,6 +54,7 @@ def count_distinct(texts: list[str]) -> int:
     noticing that you cannot is the point. Week 10 spends the whole session
     on it.
     """
+    return len(set(texts))
     raise NotImplementedError("TODO 4: count the distinct strings")
 
 

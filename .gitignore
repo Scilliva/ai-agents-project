@@ -24,3 +24,6 @@ dist/
 
 # OS junk
 .DS_Store
+
+#Files used for debugging in week 1 issue: modulenotfounderror: no module named project
+debug_path.py
