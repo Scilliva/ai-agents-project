@@ -75,6 +75,25 @@ def main() -> int:
     #   models. What does this measurement tell you about switching between
     #   them inside one request, and what would you do instead?
 
+    subprocess.run(["ollama", "stop", SMALL.name])
+
+    reply_cold, secs_cold = timed(client, SHORT, SMALL.name)
+    print(f"cold start: {secs_cold:.2f}s")
+
+    reply_warm, secs_warm = timed(client, SHORT, SMALL.name)
+    print(f"warm call:  {secs_warm:.2f}s")
+
+    rows.append({
+        "case": "cold_start", "model": SMALL.name, "seconds": round(secs_cold, 3),
+        "prompt_tokens": reply_cold.usage.prompt_tokens,
+        "completion_tokens": reply_cold.usage.completion_tokens,
+    })
+    rows.append({
+        "case": "warm_call", "model": SMALL.name, "seconds": round(secs_warm, 3),
+        "prompt_tokens": reply_warm.usage.prompt_tokens,
+        "completion_tokens": reply_warm.usage.completion_tokens,
+    })
+
     # TODO 8. Estimate what a real evaluation run would cost hosted.
     #
     #   In week 10 you build a golden set and run it. Assume 200 cases, each
@@ -90,6 +109,22 @@ def main() -> int:
     #
     #   Label them as estimates. They are not measurements and the price
     #   list is dated {PRICE_DATE}.
+
+    long_row = rows[1]
+
+    cases_per_night = 200
+    nights = 14 * 7 
+
+    total_input = long_row["prompt_tokens"] * cases_per_night * nights
+    total_output = long_row["completion_tokens"] * cases_per_night * nights
+
+    small_est = estimate(total_input, total_output, tier="small")
+    large_est = estimate(total_input, total_output, tier="large")
+
+    print(f"\nEstimated cost over the course (price list dated {PRICE_DATE}, "
+          f"these are ESTIMATES, not measurements):")
+    print(f"  small tier: {small_est.summary()}")
+    print(f"  large tier: {large_est.summary()}")
 
     write_json("artifacts/week01_cost.json",
                {"rows": rows, "price_list_date": PRICE_DATE})
