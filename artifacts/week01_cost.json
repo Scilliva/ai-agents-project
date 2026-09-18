@@ -1,0 +1,19 @@
+{
+  "rows": [
+    {
+      "case": "short",
+      "model": "qwen3:4b-instruct",
+      "seconds": 0.32,
+      "prompt_tokens": 20,
+      "completion_tokens": 3
+    },
+    {
+      "case": "long",
+      "model": "qwen3:4b-instruct",
+      "seconds": 5.792,
+      "prompt_tokens": 38,
+      "completion_tokens": 200
+    }
+  ],
+  "price_list_date": "2026-08-10"
+}
