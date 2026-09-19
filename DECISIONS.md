@@ -37,20 +37,22 @@ If the answer was cut off mid-sentence, my program should either retry the call 
 ### 3. Variance
 
 | cell | distinct (recording) | distinct (mine) | median latency |
-| closed_short, t=0.0 | 1/12 | | |
-| closed_short, t=1.0 | 1/12 | | |
-| open_list, t=0.0 | 1/12 | | |
-| open_list, t=1.0 | 11/12 | | |
+| closed_short, t=0.0 | 1/12 | 1/12 | 0.175 |
+| closed_short, t=1.0 | 1/12 | 1/10 | 0.175 |
+| open_list, t=0.0 | 1/12 | 1/12| 1.098|
+| open_list, t=1.0 | 11/12 | 11/12 | 1.138 |
 
 Which cell still returns a single answer at temperature 1.0, and why that
 one:
 
-[...]
+The cell that returns a single anwser at temp = 1.0 is `closed_short`. This is because we limited the anwser of the question to 1 word, meaning for specific question there is only one possible anwser of one word. 
 
 Which cells a test asserting exact string equality would pass on, and what
 that tells me about testing this system:
 
-[...]
+The cells that would pass the test are: both of the `closed_short` at both temp (closed question even with high temp stays the same) and `open_list` at t = 0.0 (open question produces 1 identical anwser with t=0, since greedy decoding is deterministic). It will only fail on `open_list` at t = 1.0. So it passes at every run that produced idendical string, and fails when we have distinct > 1. 
+
+The test doesn't test the model, it tests promt design and decoding settings. A test that passes today in the env, can fail in future when temp is adjusted for real use .
 
 **The sentence that carries into week 10.** [One sentence about when you can
 and cannot rely on repeating an output. Week 10 will ask you to find this
