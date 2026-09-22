@@ -59,22 +59,22 @@ otherwise in most cells.]
 
 ### 4. The cold start
 
-- cold call: 0.32 s
-- warm call: 6.16 s
-- ratio: 19
+- cold call: 3.015 s
+- warm call: 0.102 s
+- ratio: 30.2
 
 What this implies for a system that uses more than one model, and what I
 will do about it:
 
-Loading a new model costs a lot so we have to be mindful of how to use multiple models, when is it worth it to load them? We can't just switch between them indefinitely. 
+Loading a new model costs a lot so we have to be mindful of how to use multiple models, when is it worth it to load them? We can't just switch between them indefinitely. We will make sure to ask as many questions we can to one model before switching to the next one.
 
 ### 5. Cost, estimated
 
 A 200-case golden set, at the token cost of my long case:
 
 | | one run | nightly for the semester |
-| small tier | | |
-| large tier | | |
+| small tier |  |  |
+| large tier |  |  |
 
 Estimates against the price list dated [date in `project/prices.py`], not
 measurements. Running locally, my actual monetary cost was zero.

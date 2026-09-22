@@ -126,6 +126,16 @@ def main() -> int:
     print(f"  small tier: {small_est.summary()}")
     print(f"  large tier: {large_est.summary()}")
 
+    #info for decisions.md
+    total_small = small_est.input_cost + small_est.output_cost
+    total_large = large_est.input_cost + large_est.output_cost
+
+    print(f"Small Tier - One Run: ${total_small / 19600:.6f}")
+    print(f"Small Tier - Semester Total: ${total_small:.2f}")
+
+    print(f"Large Tier - One Run: ${total_large / 19600:.6f}")
+    print(f"Large Tier - Semester Total: ${total_large:.2f}")
+
     write_json("artifacts/week01_cost.json",
                {"rows": rows, "price_list_date": PRICE_DATE})
     print(local_cost_note())
