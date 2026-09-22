@@ -32,8 +32,6 @@ One sentence on the finish reason: what my program would do differently if
 it came back as a truncation rather than a normal stop:
 If the answer was cut off mid-sentence, my program should either retry the call with a higher max_tokens, rather than sending it as a finished answer to the user.
 
-[...]
-
 ### 3. Variance
 
 | cell | distinct (recording) | distinct (mine) | median latency |
@@ -46,15 +44,11 @@ Which cell still returns a single answer at temperature 1.0, and why that
 one: 
 The cell that returns a single anwser at temp = 1.0 is `closed_short`. This is because we limited the anwser of the question to 1 word, meaning for specific question there is only one possible anwser of one word. 
 
-[...]
-
 Which cells a test asserting exact string equality would pass on, and what
 that tells me about testing this system:
 The cells that would pass the test are: both of the `closed_short` at both temp (closed question even with high temp stays the same) and `open_list` at t = 0.0 (open question produces 1 identical anwser with t=0, since greedy decoding is deterministic). It will only fail on `open_list` at t = 1.0. So it passes at every run that produced idendical string, and fails when we have distinct > 1. 
 
 The test doesn't test the model, it tests promt design and decoding settings. A test that passes today in the env, can fail in future when temp is adjusted for real use .
-
-[...]
 
 **The sentence that carries into week 10.** [One sentence about when you can
 and cannot rely on repeating an output. Week 10 will ask you to find this
@@ -77,8 +71,8 @@ Loading a new model costs a lot so we have to be mindful of how to use multiple 
 A 200-case golden set, at the token cost of my long case:
 
 | | one run | nightly for the semester |
-| small tier |  |  |
-| large tier |  |  |
+| small tier | 0.000168 EUR | 3.28 EUR |
+| large tier | 0.012456 EUR | 244.14 EUR |
 
 Estimates against the price list dated [date in `project/prices.py`], not
 measurements. Running locally, my actual monetary cost was zero.
@@ -86,7 +80,7 @@ measurements. Running locally, my actual monetary cost was zero.
 Which tier I would run nightly, which I would run before a release, and why
 not the same one for both:
 
-[...]
+I would run the small tier every night and the large tier right before release. I wouldn't run the large tier every day as it is too expensive but I need to run it before release as it will give more accurate results.
 
 ### Deferred
 
