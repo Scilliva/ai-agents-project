@@ -114,27 +114,29 @@ def main() -> int:
 
     cases_per_night = 200
     nights = 14 * 7 
+    total_runs = cases_per_night * nights
 
-    total_input = long_row["prompt_tokens"] * cases_per_night * nights
-    total_output = long_row["completion_tokens"] * cases_per_night * nights
+    single_input = long_row["prompt_tokens"]
+    single_output = long_row["completion_tokens"]
 
-    small_est = estimate(total_input, total_output, tier="small")
-    large_est = estimate(total_input, total_output, tier="large")
+    small_single = estimate(single_input, single_output, tier="small")
+    large_single = estimate(single_input, single_output, tier="large")
 
-    print(f"\nEstimated cost over the course (price list dated {PRICE_DATE}, "
-          f"these are ESTIMATES, not measurements):")
-    print(f"  small tier: {small_est.summary()}")
-    print(f"  large tier: {large_est.summary()}")
+    small_semester_cost = small_single.total * total_runs
+    large_semester_cost = large_single.total * total_runs
 
-    #info for decisions.md
-    total_small = small_est.input_cost + small_est.output_cost
-    total_large = large_est.input_cost + large_est.output_cost
+    print(f"\nEstimated cost (Price list: {PRICE_DATE}):")
 
-    print(f"Small Tier - One Run: ${total_small / 19600:.6f}")
-    print(f"Small Tier - Semester Total: ${total_small:.2f}")
+    print(f"--- SMALL TIER ---")
+    print(f"Cost per 1 run:      {small_single.total:.6f} EUR")
+    print(f"Cost per 1,000 runs: {small_single.per_thousand:.2f} EUR")
+    print(f"Semester Total:      {small_semester_cost:.2f} EUR")
 
-    print(f"Large Tier - One Run: ${total_large / 19600:.6f}")
-    print(f"Large Tier - Semester Total: ${total_large:.2f}")
+    print(f"\n--- LARGE TIER ---")
+    print(f"Cost per 1 run:      {large_single.total:.6f} EUR")
+    print(f"Cost per 1,000 runs: {large_single.per_thousand:.2f} EUR")
+    print(f"Semester Total:      {large_semester_cost:.2f} EUR")
+
 
     write_json("artifacts/week01_cost.json",
                {"rows": rows, "price_list_date": PRICE_DATE})
