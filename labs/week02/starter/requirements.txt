@@ -1,0 +1,5 @@
+# Week 2. Same as week 1, nothing new. Everything still runs locally.
+
+openai>=1.60
+pydantic>=2.9
+pytest>=8.0
