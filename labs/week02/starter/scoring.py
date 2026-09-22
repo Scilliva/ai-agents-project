@@ -71,8 +71,65 @@ def score_one(record, gold, document_text: str) -> dict[str, FieldResult]:
 
     Return a dict keyed by field name.
     """
-    raise NotImplementedError("TODO 3: score the four fields")
 
+    results = {}
+
+    for field_name in ("category", "urgency"):
+        got = getattr(record, field_name, None)
+        expected = gold.get(field_name)
+
+        is_correct = got == expected
+        results[field_name] = FieldResult(
+            correct=is_correct,
+            got=got,
+            expected=expected,
+            note="" if is_correct else "Mismatch in closed label set"
+        )
+
+    got_date = getattr(record, "due_date", None)
+    expected_date = gold.get("due_date")
+
+    if expected_date is None:
+        is_date_correct = got_date is None
+    else:
+        is_date_correct = (got_date == expected_date)
+
+    results["due_date"] = FieldResult(
+        correct=is_date_correct,
+        got=got_date,
+        expected=expected_date,
+        note="" if is_date_correct else "Date mismatch or format error"
+    )
+
+    got_quote = getattr(record, "quote", None)
+    is_quote_correct = False
+    if got_quote is not None and isinstance(got_quote, str):
+        if got_quote in document_text:
+            is_quote_correct = True
+
+    expected_quote = gold.get("quote")
+    if expected_quote is None:
+        if got_quote is None or got_quote == "":
+            is_quote_correct = True
+        else:
+            is_quote_correct = False
+    else:
+        if got_quote == expected_quote:
+            if got_quote in document_text:
+                is_quote_correct = True
+            else:
+                is_quote_correct = False
+        else:
+            is_quote_correct = False
+
+    results["quote"] = FieldResult(
+        correct=is_quote_correct,
+        got=got_quote,
+        expected=expected_quote,
+        note="" if is_quote_correct else "Quote not verbatim in document or mismatch"
+    )
+
+    return results
 
 # --------------------------------------------------------------------------
 # TODO 4. Aggregate.
@@ -92,7 +149,35 @@ def score_all(records, golds, docs) -> Scoreboard:
     you will be asked which records failed and why, not what your average
     was.
     """
-    raise NotImplementedError("TODO 4: aggregate into a Scoreboard")
+    board = Scoreboard()
+
+    for i, record in enumerate(records):
+        gold = golds[i]
+        document_text = docs[i]
+
+        doc_id = gold.get("id", f"record_{i}") if isinstance(gold, dict) else f"record_{i}"
+
+        if record is None:
+            board.invalid += 1
+            board.total += 1
+
+            for f in FIELDS:
+                board.failures.append((doc_id, f, "Validation failed: record is None"))
+            continue
+
+        board.total += 1
+        results = score_one(record, gold, document_text)
+
+        for field_name, result in results.items():
+            if result.correct:
+                board.hits[field_name] += 1
+            else:
+                note = result.note or f"Expected {result.expected!r}, got {result.got!r}"
+                if len(note) > 80:
+                    note = note[:77] + "..."
+                board.failures.append((doc_id, field_name, note))
+
+    return board
 
 
 # --------------------------------------------------------------------------
