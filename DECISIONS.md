@@ -61,14 +61,14 @@ otherwise in most cells.]
 
 ### 4. The cold start
 
-- cold call: [ ] s
-- warm call: [ ] s
-- ratio: [ ]
+- cold call: 0.32 s
+- warm call: 6.16 s
+- ratio: 19
 
 What this implies for a system that uses more than one model, and what I
 will do about it:
 
-[...]
+Loading a new model costs a lot so we have to be mindful of how to use multiple models, when is it worth it to load them? We can't just switch between them indefinitely. 
 
 ### 5. Cost, estimated
 
