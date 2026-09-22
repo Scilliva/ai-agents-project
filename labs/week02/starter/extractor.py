@@ -48,6 +48,13 @@ class ServiceRequest(BaseModel):
 
     category: Literal["access", "hardware", "billing", "facilities", "other"]
     urgency: Literal["urgent", "standard", "info"]
+    due_date: str | None = Field( 
+        description="ISO 8601 date (YYYY-MM-DD) if the message states a calendar date. None if the message states no date, or only a relative expression such as 'as soon as possible' or 'before the end of the month'."
+    )
+    quote: str = Field( 
+        description="A span copied character-for-character from the message (verbatim — not translated, not paraphrased) that supports the urgency decision.",
+        max_length=200,
+    )
 
     # TODO 1a: due_date. Give it a type that can hold a date or nothing,
     #          and a Field(description=...) stating the convention. The
@@ -62,6 +69,34 @@ class ServiceRequest(BaseModel):
 # --------------------------------------------------------------------------
 
 SYSTEM_ZERO_SHOT = """\
+You are an information extraction system for the Remerbaach help desk. \
+You will be given one message from an employee or citizen, written in \
+English, French, or German. Read it and extract four fields about it.
+
+category: one of "access", "hardware", "billing", "facilities", "other". \
+Choose the closest match; do not invent a new category.
+
+urgency: one of "urgent", "standard", "info". Use "urgent" only when the \
+message describes an active, ongoing problem that needs attention now or \
+today. Use "info" when the sender says no action is needed or is only \
+informing the help desk. Use "standard" for everything else.
+
+due_date: the calendar date the message asks for a resolution by, in \
+ISO 8601 format (YYYY-MM-DD). Dates written as DD/MM/YYYY are European \
+(day before month). If the message states no date at all, or only a \
+relative expression such as "as soon as possible", "before the end of \
+the month", or "it's not urgent", return null. Do not infer or guess a \
+date that is not stated.
+
+quote: a short span copied character-for-character from the original \
+message, in its original language, that best supports your urgency \
+decision. Do not translate it, paraphrase it, or clean up spelling or \
+punctuation.
+
+Respond only with the structured fields requested. Do not add commentary.
+"""
+
+"""\
 TODO 2a: write the system prompt.
 
 It has to state, in words a model will follow:
@@ -89,8 +124,11 @@ def build_messages(system: str, document_text: str) -> list[dict]:
     instruction and the data are in the same place, a document that contains
     an instruction is indistinguishable from your instruction.
     """
+    return [
+        {"role": "system", "content": system},
+        {"role": "user", "content": document_text},
+    ]
     raise NotImplementedError("TODO 2b: return the two messages")
-
 
 # --------------------------------------------------------------------------
 # Given. The call, the validation, and the timing.
