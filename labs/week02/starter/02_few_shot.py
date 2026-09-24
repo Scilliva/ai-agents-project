@@ -61,7 +61,35 @@ def few_shot_block(n: int = 4) -> str:
     stop copying verbatim, and the field that scored perfectly zero-shot
     will get worse. Look at the recording if you want to see that happen.
     """
-    raise NotImplementedError("TODO 5: build the example block")
+    from dataclasses import asdict
+
+    selected_indices = [2, 3, 4]
+    selected_examples = [EXAMPLE_POOL[i] for i in selected_indices]
+
+    lines = []
+    lines.append("Here are examples of the expected output format:")
+    lines.append("")
+
+    for doc, gold in selected_examples:
+        gold_dict = asdict(gold)
+        
+        if doc.id == "EX-03":
+            quote = "Der Laptop aus dem Sitzungssaal laedt nicht mehr, das Netzteil ist vermutlich defekt."
+        elif doc.id == "EX-04":
+            quote = "For information only: the new intranet search will be switched on next week."
+        elif doc.id == "EX-05":
+            quote = "Nous avons recu deux fois la meme facture pour l'entretien des espaces verts, reference 2026-0417."
+        else:
+            quote = ""
+
+        lines.append(f"Document: {doc.text}")
+        lines.append(f"Category: {gold_dict['category']}")
+        lines.append(f"Urgency: {gold_dict['urgency']}")
+        lines.append(f"Due Date: {gold_dict['due_date']}")
+        lines.append(f"Quote: {quote}")
+        lines.append("")
+
+    return "\n".join(lines)
 
 
 SYSTEM_FEW_SHOT = SYSTEM_ZERO_SHOT + "\n"   # + few_shot_block(), once written
