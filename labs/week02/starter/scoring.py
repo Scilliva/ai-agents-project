@@ -71,13 +71,11 @@ def score_one(record, gold, document_text: str) -> dict[str, FieldResult]:
 
     Return a dict keyed by field name.
     """
-
     results = {}
 
     for field_name in ("category", "urgency"):
         got = getattr(record, field_name, None)
-        expected = gold.get(field_name)
-
+        expected = getattr(gold, field_name, None)
         is_correct = got == expected
         results[field_name] = FieldResult(
             correct=is_correct,
@@ -87,10 +85,10 @@ def score_one(record, gold, document_text: str) -> dict[str, FieldResult]:
         )
 
     got_date = getattr(record, "due_date", None)
-    expected_date = gold.get("due_date")
-
+    expected_date = getattr(gold, "due_date", None)
+    
     if expected_date is None:
-        is_date_correct = got_date is None
+        is_date_correct = (got_date is None or got_date == "")
     else:
         is_date_correct = (got_date == expected_date)
 
@@ -102,25 +100,16 @@ def score_one(record, gold, document_text: str) -> dict[str, FieldResult]:
     )
 
     got_quote = getattr(record, "quote", None)
+    expected_quote = getattr(gold, "quote", None)
+    
     is_quote_correct = False
-    if got_quote is not None and isinstance(got_quote, str):
-        if got_quote in document_text:
-            is_quote_correct = True
-
-    expected_quote = gold.get("quote")
     if expected_quote is None:
         if got_quote is None or got_quote == "":
             is_quote_correct = True
-        else:
-            is_quote_correct = False
     else:
         if got_quote == expected_quote:
-            if got_quote in document_text:
+            if got_quote is not None and isinstance(got_quote, str) and got_quote in document_text:
                 is_quote_correct = True
-            else:
-                is_quote_correct = False
-        else:
-            is_quote_correct = False
 
     results["quote"] = FieldResult(
         correct=is_quote_correct,
@@ -131,9 +120,6 @@ def score_one(record, gold, document_text: str) -> dict[str, FieldResult]:
 
     return results
 
-# --------------------------------------------------------------------------
-# TODO 4. Aggregate.
-# --------------------------------------------------------------------------
 
 def score_all(records, golds, docs) -> Scoreboard:
     """Roll the per record results into per field counts.
@@ -150,19 +136,23 @@ def score_all(records, golds, docs) -> Scoreboard:
     was.
     """
     board = Scoreboard()
+    doc_ids = list(golds.keys())
 
-    for i, record in enumerate(records):
-        gold = golds[i]
-        document_text = docs[i]
-
-        doc_id = gold.get("id", f"record_{i}") if isinstance(gold, dict) else f"record_{i}"
+    for i, doc_id in enumerate(doc_ids):
+        gold = golds[doc_id]
+        document_text = docs[doc_id] if isinstance(docs, dict) else docs[i]
+        record = records[i]
+        
+        if isinstance(gold, dict):
+            log_id = gold.get("id", doc_id)
+        else:
+            log_id = getattr(gold, "id", doc_id)
 
         if record is None:
             board.invalid += 1
             board.total += 1
-
             for f in FIELDS:
-                board.failures.append((doc_id, f, "Validation failed: record is None"))
+                board.failures.append((log_id, f, "Validation failed: record is None"))
             continue
 
         board.total += 1
@@ -172,10 +162,12 @@ def score_all(records, golds, docs) -> Scoreboard:
             if result.correct:
                 board.hits[field_name] += 1
             else:
-                note = result.note or f"Expected {result.expected!r}, got {result.got!r}"
+                expected_val = result.expected
+                got_val = result.got
+                note = result.note or f"Expected {expected_val!r}, got {got_val!r}"
                 if len(note) > 80:
                     note = note[:77] + "..."
-                board.failures.append((doc_id, field_name, note))
+                board.failures.append((log_id, field_name, note))
 
     return board
 
