@@ -1,0 +1,146 @@
+{
+  "name": "week02_zero_shot_gold",
+  "description": "Gold standard annotations for the 10-document zero-shot baseline.",
+  "cases": [
+    {
+      "case_id": "REQ-01",
+      "week_added": 2,
+      "question": "Hello, I cannot sign in to the citizen portal any more. My password reset email never arrives. I have a residence appointment at the Bierger-Center tomorrow at 09:00 and I need the confirmation letter from my account before then. Please help today.",
+      "expected": {
+        "category": "access",
+        "urgency": "urgent",
+        "due_date": null
+      },
+      "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
+      "slice_tags": [
+        "en"
+      ]
+    },
+    {
+      "case_id": "REQ-02",
+      "week_added": 2,
+      "question": "Bonjour, l'imprimante du service technique au deuxieme etage n'imprime plus depuis lundi. Elle affiche une erreur de bourrage papier alors qu'il n'y a pas de papier coince. Nous en aurons besoin pour la seance du conseil, donc au plus tard le 15/09/2026. Merci.",
+      "expected": {
+        "category": "hardware",
+        "urgency": "standard",
+        "due_date": "2026-09-15"
+      },
+      "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
+      "slice_tags": [
+        "en"
+      ]
+    },
+    {
+      "case_id": "REQ-03",
+      "week_added": 2,
+      "question": "Guten Tag, auf unserer letzten Rechnung fuer die Kantinennutzung steht ein Betrag von 480 Euro, wir haben aber nur elf Mittagessen bestellt. Koennen Sie das bitte pruefen und gegebenenfalls korrigieren? Es eilt nicht.",
+      "expected": {
+        "category": "billing",
+        "urgency": "standard",
+        "due_date": null
+      },
+      "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
+      "slice_tags": [
+        "en"
+      ]
+    },
+    {
+      "case_id": "REQ-04",
+      "week_added": 2,
+      "question": "The main entrance door of the Bierger-Center did not lock last night. It is standing open right now and anyone can walk into the building, including the room where the archive boxes are kept. Someone needs to come immediately.",
+      "expected": {
+        "category": "facilities",
+        "urgency": "urgent",
+        "due_date": null
+      },
+      "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
+      "slice_tags": [
+        "en"
+      ]
+    },
+    {
+      "case_id": "REQ-05",
+      "week_added": 2,
+      "question": "Bonjour, ma nouvelle collegue commence lundi au service population. Pourriez-vous lui creer un compte sur le portail interne et lui donner acces au dossier partage du service? Ce n'est pas urgent, mais ce serait bien avant la fin du mois.",
+      "expected": {
+        "category": "access",
+        "urgency": "standard",
+        "due_date": null
+      },
+      "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
+      "slice_tags": [
+        "en"
+      ]
+    },
+    {
+      "case_id": "REQ-06",
+      "week_added": 2,
+      "question": "Just so you know: from the next billing cycle our supplier reference on the water invoices changes from LU-COM-4417 to LU-COM-4419. No action needed from your side, I am only informing the help desk so nobody is surprised.",
+      "expected": {
+        "category": "billing",
+        "urgency": "info",
+        "due_date": null
+      },
+      "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
+      "slice_tags": [
+        "en"
+      ]
+    },
+    {
+      "case_id": "REQ-07",
+      "week_added": 2,
+      "question": "Sehr geehrte Damen und Herren, die Heizung im Sitzungssaal des Gemeindehauses funktioniert nicht. Die Raumtemperatur liegt bei etwa vierzehn Grad. Die naechste oeffentliche Sitzung ist am 1. Oktober 2026, bis dahin sollte es repariert sein.",
+      "expected": {
+        "category": "facilities",
+        "urgency": "standard",
+        "due_date": "2026-10-01"
+      },
+      "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
+      "slice_tags": [
+        "en"
+      ]
+    },
+    {
+      "case_id": "REQ-08",
+      "week_added": 2,
+      "question": "Le serveur de fichiers du service urbanisme ne repond plus du tout. Personne dans le service ne peut ouvrir un dossier ce matin et nous avons trois permis de construire a instruire aujourd'hui. C'est bloquant pour toute l'equipe.",
+      "expected": {
+        "category": "hardware",
+        "urgency": "urgent",
+        "due_date": null
+      },
+      "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
+      "slice_tags": [
+        "en"
+      ]
+    },
+    {
+      "case_id": "REQ-09",
+      "week_added": 2,
+      "question": "Hi, is there any chance the help desk could publish its opening hours somewhere on the intranet? I never remember them and I keep asking colleagues. Not a problem, just a suggestion.",
+      "expected": {
+        "category": "other",
+        "urgency": "info",
+        "due_date": null
+      },
+      "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
+      "slice_tags": [
+        "en"
+      ]
+    },
+    {
+      "case_id": "REQ-10",
+      "week_added": 2,
+      "question": "Could someone please add me to the shared mailbox for building permits? I was moved to that team last week and I still only see my own inbox. It would be good to have it before the end of the month.",
+      "expected": {
+        "category": "access",
+        "urgency": "standard",
+        "due_date": null
+      },
+      "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
+      "slice_tags": [
+        "en"
+      ]
+    }
+  ]
+}

@@ -72,8 +72,54 @@ def main() -> int:
     #
     #   Then run: python -m project.verify
 
-    return 0
+    from dataclasses import asdict
 
+    gold_cases = []
+    gold_ids = list(GOLD.keys())
+
+    for i, doc_id in enumerate(gold_ids):
+        raw_doc = DOCS[i]
+        if isinstance(raw_doc, str):
+            doc_text = raw_doc
+        else:
+            doc_text = raw_doc.text
+
+        gold_annotation = GOLD[doc_id]
+        
+        if isinstance(gold_annotation, dict):
+            expected_dict = gold_annotation
+            gold_id = gold_annotation.get("id", doc_id)
+        else:
+            expected_dict = asdict(gold_annotation)
+            gold_id = getattr(gold_annotation, "id", doc_id)
+
+        behavior = (
+            "Extracts category, urgency, due_date, and quote verbatim from the text. "
+            "due_date is None if no specific ISO date is mentioned. "
+            "quote must be a substring of the source text."
+        )
+        
+        lang_tag = "en"
+        
+        case = {
+            "case_id": gold_id,
+            "week_added": 2,
+            "question": doc_text,
+            "expected": expected_dict,
+            "expected_behavior": behavior,
+            "slice_tags": [lang_tag]
+        }
+        gold_cases.append(case)
+
+    gold_set = {
+        "name": "week02_zero_shot_gold",
+        "description": "Gold standard annotations for the 10-document zero-shot baseline.",
+        "cases": gold_cases
+    }
+
+    write_json("artifacts/goldset.json", gold_set)
+
+    return 0
 
 if __name__ == "__main__":
     raise SystemExit(main())
