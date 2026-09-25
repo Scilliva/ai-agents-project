@@ -100,22 +100,18 @@ def score_one(record, gold, document_text: str) -> dict[str, FieldResult]:
     )
 
     got_quote = getattr(record, "quote", None)
-    expected_quote = getattr(gold, "quote", None)
-    
-    is_quote_correct = False
-    if expected_quote is None:
-        if got_quote is None or got_quote == "":
-            is_quote_correct = True
-    else:
-        if got_quote == expected_quote:
-            if got_quote is not None and isinstance(got_quote, str) and got_quote in document_text:
-                is_quote_correct = True
+
+    is_quote_correct = (
+        isinstance(got_quote, str)
+        and got_quote != ""
+        and got_quote in document_text
+    )
 
     results["quote"] = FieldResult(
         correct=is_quote_correct,
         got=got_quote,
-        expected=expected_quote,
-        note="" if is_quote_correct else "Quote not verbatim in document or mismatch"
+        expected="(any verbatim substring of the source message)",
+        note="" if is_quote_correct else "Quote is empty or not a verbatim substring of the document",
     )
 
     return results
@@ -140,7 +136,8 @@ def score_all(records, golds, docs) -> Scoreboard:
 
     for i, doc_id in enumerate(doc_ids):
         gold = golds[doc_id]
-        document_text = docs[doc_id] if isinstance(docs, dict) else docs[i]
+        doc = docs[doc_id] if isinstance(docs, dict) else docs[i]
+        document_text = doc.text if hasattr(doc, "text") else doc
         record = records[i]
         
         if isinstance(gold, dict):

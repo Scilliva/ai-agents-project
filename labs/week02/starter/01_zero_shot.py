@@ -99,7 +99,7 @@ def main() -> int:
             "quote must be a substring of the source text."
         )
         
-        lang_tag = "en"
+        lang_tag = "en" if isinstance(raw_doc, str) else raw_doc.lang
         
         case = {
             "case_id": gold_id,
