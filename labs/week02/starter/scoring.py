@@ -81,7 +81,7 @@ def score_one(record, gold, document_text: str) -> dict[str, FieldResult]:
             correct=is_correct,
             got=got,
             expected=expected,
-            note="" if is_correct else "Mismatch in closed label set"
+            note="" if is_correct else f"expected {expected!r}, got {got!r}"
         )
 
     got_date = getattr(record, "due_date", None)
@@ -96,7 +96,7 @@ def score_one(record, gold, document_text: str) -> dict[str, FieldResult]:
         correct=is_date_correct,
         got=got_date,
         expected=expected_date,
-        note="" if is_date_correct else "Date mismatch or format error"
+        note="" if is_date_correct else f"expected {expected_date!r}, got {got_date!r}"
     )
 
     got_quote = getattr(record, "quote", None)
@@ -111,7 +111,7 @@ def score_one(record, gold, document_text: str) -> dict[str, FieldResult]:
         correct=is_quote_correct,
         got=got_quote,
         expected="(any verbatim substring of the source message)",
-        note="" if is_quote_correct else "Quote is empty or not a verbatim substring of the document",
+        note="" if is_quote_correct else f"quote {got_quote!r} not found verbatim in source"
     )
 
     return results
