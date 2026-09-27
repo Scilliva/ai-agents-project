@@ -87,3 +87,103 @@ I would run the small tier every night and the large tier right before release. 
 [Anything you did not get to, and why. An explicit deferral with a reason is
 engineering. Silence is not, and the project rubric can tell the
 difference.]
+
+## Week 2
+
+**Run conditions.** model: qwen3:4b-instruct | temperature: 0.0 | prompt version: week02-zero-shot-v1 |
+served locally | date: 2026-09-22 | scored on: my own
+machine
+
+### 1. The output contract
+
+The conventions I chose, and why:
+
+- due_date, when the message states no date: return null or None
+- due_date, when the message states only a relative expression: null
+- quote, and what "verbatim" means in my scorer: the quote has to appear as an exact substring inside the original message
+- what my scorer does with a record that failed validation: it counts it
+  as invalid and marks every field wrong for that record instead of
+  skipping it
+
+[One sentence on why the last one matters. A scorer that skips the records
+it could not parse reports a number that improves as the model gets worse.]
+
+This matters because a scorer that skips the records it could not parse would report a number that gets better the worse the model performs, since the broke outputs simply disappear from the count.
+
+### 2. Zero-shot, per field
+
+| field | correct | of |
+| category | 7 | 10 |
+| urgency | 9 | 10 |
+| due_date | 7 | 10 |
+| quote | 9 | 10 |
+| invalid records | 0 | 10 |
+
+My prediction, written before block 3: examples will help most on due_date
+because the model's main failure is inventing a plausible date instead of returning null, showing an exmaple of when returning null should fix it.
+
+### 3. Few-shot
+
+Examples chosen, and the job each one does:
+
+| example | why it is in the block | field it should move |
+
+| | | |
+| | | |
+| | | |
+
+| field | zero-shot | few-shot | move |
+| category | 7/10 | 5/10 | -2 |
+| urgency | 9/10 | 9/10 | +0 |
+| due_date | 7/10 | 7/10 | +0 |
+| quote | 9/10 | 8/10 | -1 |
+
+### 4. What got worse
+
+[Name the field, if any, and diagnose it. If nothing got worse, say so and
+say how you checked. Then look at the failure lines rather than the counts,
+and say whether any error disappeared or merely changed shape. A wrong label
+that became a different wrong label has not been fixed.]
+Category got worse, from 7/10 to 5/10. Due_date did not move at all, so
+my prediction was wrong: the examples did not fix the invented-date problem. Adding examples seems to have pushed the
+model toward mislabeling more messages as "facilities" that should have
+been something else. Quote also dropped slightly, from 9/10 to 8/10.
+
+### 5. What the examples cost
+
+- extra input tokens per call: 280
+- per thousand calls: 280000
+- estimated euros per thousand calls on the small tier: [ ], against the
+  price list dated [ ]. Estimate, not a measurement.
+
+### 6. Ship it or not
+
+[Which variant, on what evidence, and what would change your mind. Ten
+records is not enough to be confident and saying so is worth more than
+claiming a win. If your answer is "keep one example and drop the rest", say
+which one and why.]
+We would ship zero-shot because few-shot made category and quote worse. It did not move due_date at alm, which is the field we were expecting it to fix. 
+
+### Sensitivity variant
+
+Variant assigned: [ ]. What I changed: [ ]. What moved: [ ].
+
+[If nothing moved, say so. A knob that changes nothing measurable is a real
+result, and it tells the room which knobs are worth arguing about.]
+
+### The gold set
+
+Ten cases written to `artifacts/goldset.json`, tagged by language.
+
+One thing my scorer cannot currently detect:
+
+[This is the most valuable line on the page. An example: "our scorer cannot
+tell a correctly formatted date that is simply the wrong date from a
+correctly extracted one, because it only compares strings."]
+
+It cannot tell a correctly formatted date that is simply the wrong date apart from a date that was invented outright, because it only compares strings against the gold date.
+
+### Deferred
+
+[Anything you did not get to, and why.]
+The sentitivity variant since we werent assigned a role during the practical.

@@ -27,7 +27,7 @@
       },
       "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
       "slice_tags": [
-        "en"
+        "fr"
       ]
     },
     {
@@ -41,7 +41,7 @@
       },
       "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
       "slice_tags": [
-        "en"
+        "de"
       ]
     },
     {
@@ -69,7 +69,7 @@
       },
       "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
       "slice_tags": [
-        "en"
+        "fr"
       ]
     },
     {
@@ -97,7 +97,7 @@
       },
       "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
       "slice_tags": [
-        "en"
+        "de"
       ]
     },
     {
@@ -111,7 +111,7 @@
       },
       "expected_behavior": "Extracts category, urgency, due_date, and quote verbatim from the text. due_date is None if no specific ISO date is mentioned. quote must be a substring of the source text.",
       "slice_tags": [
-        "en"
+        "fr"
       ]
     },
     {
