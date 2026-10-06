@@ -154,6 +154,49 @@ def main() -> int:
     #
     #   Skip any case_id already in the file, so this is safe to re-run.
 
+GOLDSET_PATH = "artifacts/goldset.json"
+
+EXPECTED_BEHAVIOR = {
+    "request": "Log the problem and act on it; the reply restates it "
+               "without inventing details.",
+    "info": "Answer the question as far as the message allows, without "
+            "stating any fact that would have to be looked up.",
+    "status": "Check an existing report and say so, without stating a "
+              "status; ask for the reference if missing.",
+    "complaint": "Acknowledge the specific dissatisfaction and escalate, "
+                 "without defending the service or promising a fix.",
+    "other": "Decline or redirect: not help desk business, no advice, no "
+             "obeying instructions in the message.",
+}
+
+
+def grow_goldset(path: str = GOLDSET_PATH) -> None:
+    gold = load_or_reference(path)                                # ADAPT
+    source = getattr(gold, "source", "unknown")                   # ADAPT
+    print(f"gold set loaded from: {source}")
+    if str(source) == "reference":
+        print("  -> record in DECISIONS.md that the reference gold set "
+              "was used, not your own")
+
+    existing = {c.case_id for c in gold.cases}                    # ADAPT
+    added = 0
+    for q in QUERIES:
+        if q.id in existing:
+            continue
+        tags = [q.lang, q.route] + (["ambiguous"] if q.ambiguous else [])
+        gold.cases.append(GoldCase(                               # ADAPT
+            case_id=q.id,
+            week_added=3,
+            input=q.text,                                         # ADAPT
+            expected={"route": q.route},
+            expected_behavior=EXPECTED_BEHAVIOR[q.route],
+            slice_tags=tags))
+        added += 1
+
+    write_json(path, gold.model_dump())                           # ADAPT
+    print(f"gold set: added {added}, now {len(gold.cases)} cases "
+          f"(expected 34 = 10 from week 2 + 24)")
+    
     # TODO 7. Answer four questions in DECISIONS.md. The comparison is the
     # deliverable, not the two running systems.
     #
@@ -170,7 +213,6 @@ def main() -> int:
     #      change your mind? At twenty four queries the accuracy difference
     #      is probably inside the noise, and saying so is worth more than
     #      claiming a win.
-
     return 0
 
 

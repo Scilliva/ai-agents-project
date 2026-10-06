@@ -30,7 +30,9 @@ class RouteScore:
     total: int = 0
     ambiguous_total: int = 0
     ambiguous_hits: int = 0
+    
     confidences: list[float] = field(default_factory=list)
+    invalid : int=0
 
     @property
     def hits(self) -> int:
