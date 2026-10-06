@@ -19,6 +19,8 @@ from tools import compute, search_services
 from project.models import LARGE
 from project.trace import TraceRecorder, local_conditions
 
+import re
+
 # --------------------------------------------------------------------------
 # TODO 1. The schemas, in the shape this endpoint speaks.
 # --------------------------------------------------------------------------
@@ -46,7 +48,14 @@ def to_openai_schema(schema: dict[str, Any]) -> dict[str, Any]:
     tools.py calls it "input_schema". Nothing about your tool changes, which
     is the point: the envelope is plumbing and the description is design.
     """
-    raise NotImplementedError("TODO 1: convert the schema envelope")
+    return {
+        "type": "function",
+        "function": {
+            "name": schema["name"],
+            "description": schema["description"],
+            "parameters": schema["input_schema"],
+        },
+    }
 
 
 SCHEMAS = [to_openai_schema(s) for s in ANTHROPIC_SCHEMAS]
@@ -138,7 +147,39 @@ def run_tool_call(name: str, raw_arguments: str) -> tuple[Any, bool]:
     paste it into its answer, and you have just told whoever asked the
     question what your directory layout is.
     """
-    raise NotImplementedError("TODO 5: validate, execute, catch, cap")
+    # Job 1: parse the arguments the model wrote.
+    try:
+        args = json.loads(raw_arguments) if raw_arguments else {}
+    except (json.JSONDecodeError, TypeError):
+        return ("ERROR: the arguments were not valid JSON. Send a single "
+                "JSON object, for example {\"query\": \"waste collection "
+                "fee\"}."), True
+    if not isinstance(args, dict):
+        return "ERROR: the arguments must be a JSON object.", True
+
+    # Job 2: the tool name is also something the model wrote.
+    fn = DISPATCH.get(name)
+    if fn is None:
+        return (f"ERROR: there is no tool called '{name}'. The tools that "
+                f"exist are: {', '.join(sorted(DISPATCH))}."), True
+
+    # Job 3: execute inside a try, and never leak the exception itself.
+    try:
+        result = fn(**args)
+    except (ValueError, TypeError) as exc:
+        msg = re.sub(r"(?:[A-Za-z]:)?[/\\]+[\w.\-]+(?:[/\\][\w.\-]+)*",
+                     "<path>", str(exc))
+        return f"ERROR: {msg}. Fix the arguments and try again.", True
+    except Exception as exc:
+        return (f"ERROR: the tool failed unexpectedly "
+                f"({type(exc).__name__}). Try a different call."), True
+
+    # Job 4: serialise, then cap the size and say so when truncating.
+    text = result if isinstance(result, str) else json.dumps(
+        result, ensure_ascii=False)
+    if len(text) > MAX_RESULT_CHARS:
+        text = text[:MAX_RESULT_CHARS] + " ...[truncated]"
+    return text, False
 
 
 # --------------------------------------------------------------------------
@@ -186,7 +227,84 @@ def run_task(client, task, model: str = LARGE.name,
     depends on a model's judgment, which is not a property you can promise
     anybody.
     """
-    raise NotImplementedError("TODO 2, 3, 4: the loop and its caps")
+    run = Run(task_id=task.id)
+    t0 = time.perf_counter()
+
+    messages = [{"role": "system", "content": system},
+                {"role": "user", "content": task.question}]
+    seen_ids: set[str] = set()   # TODO 4: doc_ids the model has already seen
+    stalls = 0                   # TODO 4: consecutive searches with nothing new
+
+    # TODO 3: the step cap is the range. The loop cannot run forever.
+    for _ in range(max_steps):
+        # TODO 2: one model call per step.
+        resp = client.chat.completions.create(
+            model=model, messages=messages, tools=SCHEMAS, temperature=0.0)
+        run.steps += 1
+        if getattr(resp, "usage", None):
+            run.tokens += resp.usage.total_tokens or 0
+
+        msg = resp.choices[0].message
+        calls = msg.tool_calls or []
+
+        # Exit 1: no tool calls means the model is done.
+        if not calls:
+            run.answer = (msg.content or "").strip()
+            if not run.answer:   # never hand back an empty string
+                run.cap_fired = "empty reply"
+                run.answer = _partial(run, "The model returned an empty reply")
+            break
+
+        # The assistant turn goes in BEFORE the tool results.
+        messages.append({
+            "role": "assistant",
+            "content": msg.content or "",
+            "tool_calls": [{"id": c.id, "type": "function",
+                            "function": {"name": c.function.name,
+                                         "arguments": c.function.arguments}}
+                           for c in calls],
+        })
+
+        searched = False
+        found_new = False
+        for c in calls:
+            name = c.function.name
+            result, errored = run_tool_call(name, c.function.arguments)
+            run.tool_calls.append(name)
+            run.tool_errors += int(errored)
+            if INJECTION_MARKER in str(result):
+                run.saw_injection = True
+
+            if name == "search_services" and not errored:
+                searched = True
+                new = _doc_ids(result) - seen_ids
+                if new:
+                    found_new = True
+                    seen_ids |= new
+
+            # One tool message per call, carrying that call's id.
+            messages.append({"role": "tool", "tool_call_id": c.id,
+                             "content": str(result)})
+
+        # TODO 4: progress means "a doc_id I had not seen". Only searches
+        # count. A compute step neither resets nor increments the counter.
+        if found_new:
+            stalls = 0
+        elif searched:
+            stalls += 1
+            if stalls >= stall_limit:
+                run.cap_fired = "no progress"
+                run.answer = _partial(
+                    run, f"The search found nothing new in {stall_limit} "
+                         f"searches in a row")
+                break
+    else:
+        # TODO 3: the for loop used all its steps without a final answer.
+        run.cap_fired = "step limit"
+        run.answer = _partial(run, f"The step limit of {max_steps} was reached")
+
+    run.seconds = time.perf_counter() - t0
+    return run
 
 
 def _partial(run: Run, reason: str) -> str:
