@@ -38,6 +38,13 @@ class Routed(BaseModel):
 # TODO 2. The classifying call.
 # --------------------------------------------------------------------------
 
+def _decision_schema() -> dict:
+    """JSON schema for constrained decoding, built from the pydantic model
+    so the schema and the validator can never disagree."""
+    schema = Decision.model_json_schema()
+    schema["additionalProperties"] = False
+    return schema
+
 def classify(client, text: str, model: str = SMALL.name,
              temperature: float = 0.0) -> tuple[Decision | None, dict]:
     """One cheap call whose only job is to pick a route.
@@ -55,7 +62,27 @@ def classify(client, text: str, model: str = SMALL.name,
     what makes it cheap enough to be worth adding, and it is what makes its
     output inspectable.
     """
-    raise NotImplementedError("TODO 2: the classifying call")
+    t0 = time.perf_counter()
+    reply = client.chat.completions.create(
+        model=model, temperature=temperature, max_tokens=200,
+        messages=[{"role": "system", "content": SYSTEM_ROUTER},
+                  {"role": "user", "content": text}],
+        response_format={"type": "json_schema",
+                         "json_schema": {"name": "decision",
+                                         "strict": True,
+                                         "schema": _decision_schema()}})
+    raw = reply.choices[0].message.content or ""
+    meta = {
+        "seconds": time.perf_counter() - t0,
+        "prompt_tokens": reply.usage.prompt_tokens,
+        "completion_tokens": reply.usage.completion_tokens,
+        "raw": raw,
+    }
+    try:
+        decision = Decision.model_validate_json(raw)
+    except ValidationError:
+        decision = None
+    return decision, meta
 
 
 # --------------------------------------------------------------------------
@@ -68,7 +95,7 @@ def classify(client, text: str, model: str = SMALL.name,
 # exercise exists to catch. Run the classifier over the twenty four queries
 # first, print the confidences, and then decide. On one of the two course
 # models the answer will surprise you.
-CONFIDENCE_FLOOR = None      # TODO 3a
+CONFIDENCE_FLOOR = 0.95      # TODO 3a
 
 # TODO 3b. Where does anything the policy rejects go?
 #
@@ -76,7 +103,7 @@ CONFIDENCE_FLOOR = None      # TODO 3a
 # DOES on the sender's behalf, and pick the one whose actions are easiest to
 # undo. One of the five logs a ticket, one escalates to a human, and one
 # only answers. That should decide it.
-SAFE_DEFAULT = None          # TODO 3b
+SAFE_DEFAULT = "info"          # TODO 3b
 
 
 def apply_policy(decision: Decision | None, text: str) -> Routed:
