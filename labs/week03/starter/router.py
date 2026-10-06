@@ -129,9 +129,24 @@ def apply_policy(decision: Decision | None, text: str) -> Routed:
     it None when the decision stood. You will count these at the checkpoint,
     and "the policy fired sometimes" is not a count.
     """
-    raise NotImplementedError("TODO 3: the policy layer")
+    if decision is None:
+        placeholder = Decision(route=SAFE_DEFAULT, confidence=0.0,
+                               evidence="")
+        return Routed(decision=placeholder, applied_route=SAFE_DEFAULT,
+                      policy_fired="invalid_decision", evidence_ok=False)
+    
+    evidence_ok = bool(decision.evidence) and decision.evidence in text
+    if not evidence_ok:
+        return Routed(decision=decision, applied_route=SAFE_DEFAULT,
+                      policy_fired="evidence_not_verbatim",
+                      evidence_ok=False)
 
+    if decision.confidence < CONFIDENCE_FLOOR:
+        return Routed(decision=decision, applied_route=SAFE_DEFAULT,
+                      policy_fired="below_threshold", evidence_ok=True)
 
+    return Routed(decision=decision, applied_route=decision.route,
+                  policy_fired=None, evidence_ok=True)
 # --------------------------------------------------------------------------
 # Given. The answering call.
 # --------------------------------------------------------------------------
