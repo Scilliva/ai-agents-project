@@ -33,11 +33,11 @@ from __future__ import annotations
 # and write the decision in DECISIONS.md.
 
 ROUTE_DEFINITIONS = {
-    "request": "TODO 1a",
-    "info": "TODO 1b",
-    "status": "TODO 1c",
-    "complaint": "TODO 1d",
-    "other": "TODO 1e",
+    "request": "The user requests to perform a specific administrative action, such as issuing a document or applying for a permit.",
+    "info": "The user wants details about existing services, opening hours, fees, or procedures without asking for a new action to be taken.",
+    "status": "The user inquires about the current progress or location of a file or application that was previously submitted.",
+    "complaint": "The user expresses complains with a service outcome or process and expects an acknowledgment or explanation of the failure.",
+    "other": "The message contains no actionable request, inquiry, status check, or grievance, such as greetings, spam, or unrelated correspondence."
 }
 
 ROUTES = tuple(ROUTE_DEFINITIONS)
