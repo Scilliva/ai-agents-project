@@ -67,8 +67,44 @@ def score_routes(results, queries) -> RouteScore:
     wrong, whether the evidence was verbatim, which policy check fired, the
     confidence value, and whether the query was one of the ambiguous four.
     """
-    raise NotImplementedError("TODO 5: score the routes")
+    if len(results) != len(queries):
+        raise ValueError(
+            f"results ({len(results)}) and queries ({len(queries)}) "
+            f"must be aligned")
 
+    s = RouteScore()
+    for r, q in zip(results, queries):
+        invalid = r.policy_fired == "invalid_decision"
+        if invalid:
+            s.invalid += 1
+        # A failed classification never counts as a hit, even when the safe
+        # default happens to equal the gold route (week 2's rule for None).
+        hit = (r.applied_route == q.route) and not invalid
+
+        counts = s.per_route.setdefault(q.route, [0, 0])
+        counts[1] += 1
+        if hit:
+            counts[0] += 1
+        else:
+            s.confusion[(q.route, r.applied_route)] += 1
+
+        s.total += 1
+        if q.ambiguous:
+            s.ambiguous_total += 1
+            if hit:
+                s.ambiguous_hits += 1
+
+        if r.evidence_ok:
+            s.evidence_ok += 1
+        if r.policy_fired:
+            s.policy_fired[r.policy_fired] += 1
+
+        # The placeholder confidence of 0.0 on an invalid decision was never
+        # produced by the model, so it stays out of the distribution.
+        if not invalid:
+            s.confidences.append(r.decision.confidence)
+
+    return s
 
 # --------------------------------------------------------------------------
 # Given.
