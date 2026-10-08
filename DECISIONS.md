@@ -187,3 +187,106 @@ It cannot tell a correctly formatted date that is simply the wrong date apart fr
 
 [Anything you did not get to, and why.]
 The sentitivity variant since we werent assigned a role during the practical.
+
+## Week 3
+
+**Run conditions.** classifier model: qwen2.5:7b | answering model: qwen2.5:7b |
+temperature: 0.0 | served locally | date: [2026-09-29] | scored on: my own machine
+
+### 1. The five route definitions
+
+| route | definition, one sentence, in terms of what the help desk must do |
+| request | The help desk must process an incoming application, form submission, or action request from a resident. |
+| info | The help desk must look up and provide general facts, opening hours, fees, or procedural guidance from the handbook. |
+| status | The help desk must check and report on the current processing state or progress of an existing request or file. |
+| complaint | The help desk must log and acknowledge a formal issue, grievance, or report of faulty municipal infrastructure. |
+| other | The help desk must handle or route queries that fall outside standard commune administrative topics. |
+
+My convention for the four ambiguous queries:
+
+[Two defensible conventions exist. Neither is discoverable from the data.
+What matters is that yours was written down before you measured, not which
+one you picked.]
+The four ambiguous queries were assigned based on core action intent.
+When a message both reports an unresolved problem and complains about handling, the gold route is complaint. 
+When chasing a report without dissatisfaction, it is status. 
+When asking procedural questions while reporting a fault, it is request.
+
+Do my definitions match the ones in `queries.py`? yes
+
+### 2. The policy layer
+
+Before choosing a threshold, the confidence values I saw were: min 0.00, max 0.99, 2 distinct values across 24 queries.
+
+- confidence floor: 0.7, because 0.7 correlated with misclassified ambigous queries
+- evidence check: falls back to other if an invalid evidence span indicades bad response by classifier
+- safe default: info, because that specialist handles general commune queries safely without triggering a side effect
+
+How often each check fired: below_threshold 1, evidence_not_verbatim 1,
+invalid_decision 0.
+
+[If a check fired zero times, say what that tells you. A threshold that
+never fires is either a very good classifier or a useless signal, and the
+confidence distribution above tells you which.]
+
+Redirected safely when the policy checks fired twice, intercepting low confidence predictions and non verbatim evidence spans.
+
+### 3. Route accuracy
+
+| route | correct | of |
+| request | 3 | 7 |
+| info | 4 | 5 |
+| status | 4 | 4 |
+| complaint | 4 | 4 |
+| other | 0 | 4 |
+
+Overall 15/24. Excluding the four ambiguous: 12/20.
+
+Confusion pairs, with direction:
+
+| gold | applied | count |
+| | | |
+
+The route carrying most of the error is other and request. The fix is a prompt adjustement, because if we restrain the distinction between requesting administrative action or reporting a complaint will result in  request/complaint classification errors.
+
+### 4. What routing cost
+
+- monolith: 14032 tokens over 24 queries
+- router: 12062 tokens over 24 queries
+- the classifying call alone: 7724 tokens, which is 64 per cent of the
+  routed total
+
+I predicted that share would be 25 before measuring it.
+
+[If the share surprised you, say why. The classifier's prompt carries every
+route definition on every call, and the specialists carry only their own.]
+
+### 5. What routing bought
+
+One thing a specialist can be forbidden to do that the monolith cannot be
+given:
+
+A specialist  can be completely restricted from calling external tools or accessing senstiitve personal data APIs that other routes require.
+Would I ship the router: no. Evidence: Routing accuracy wasnt too high (15/24) and latency doubled from 46s to 82.3s while clqssification took 64% of tokens. What would change my mind: improving clasisfier definitions to 90+% accuracy and reduce latency.
+
+### 6. Stretch variant
+
+Variant assigned: [ ]. Result: [ ].
+
+[For model routing: report both models on accuracy, evidence verbatim, the
+confidence range, and resident memory. If the smaller model won, say so
+plainly and say what you think that means.]
+
+[For voting: report the split-vote count at each temperature. If nothing
+ever disagreed, that is the result. Say what it cost and what it bought.]
+
+### The gold set
+
+`artifacts/goldset.json` now holds 34 cases: 10 from week 2 and 24 added
+today, with the four ambiguous ones tagged.
+
+### Deferred
+
+[Anything you did not get to, and why.]
+The stretch variant, we did not have time to do it and werent assigned a variant.
+
