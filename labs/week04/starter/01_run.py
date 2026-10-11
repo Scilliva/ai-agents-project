@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import argparse
 
-from agent import SYSTEM, run_task
+from agent import SYSTEM, NO_TOOLS_SYSTEM, run_task
 from scoring import report, score_all
 from tasks import TASKS
 
@@ -48,7 +48,9 @@ def main() -> int:
 
     client = get_client(args.replay)
 
-    runs = [run_task(client, t, model=args.model, max_steps=args.max_steps)
+    runs = [run_task(client, t, model=args.model, max_steps=args.max_steps,
+                     use_tools=not args.no_tools,
+                     system=NO_TOOLS_SYSTEM if args.no_tools else SYSTEM)
             for t in TASKS]
     board = score_all(TASKS, runs)
     print(report(board, runs))
@@ -59,6 +61,7 @@ def main() -> int:
                              if r.task_id == task.id) else "FAIL"
         print(f"  [{mark}] {task.id}  steps {run.steps}  "
               f"{run.seconds:5.1f}s  tools={run.tool_calls}")
+        print(f"    answer: {run.answer}")
 
     write_json("artifacts/week04_agent.json", {
         "model": args.model, "max_steps": args.max_steps,

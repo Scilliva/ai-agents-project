@@ -66,6 +66,14 @@ appear in a search result. Quote figures exactly as the handbook gives them.
   Answer in the language of the question, in under eighty words.
 """
 
+# Used only for the --no-tools baseline. The normal SYSTEM prompt says the
+# model MUST call search_services, which would contradict a run with no tools.
+NO_TOOLS_SYSTEM = """\
+You answer questions for the help desk of Remerbaach, a Luxembourg commune. \
+You have no tools. Answer from your own knowledge, in the language of the \
+question, in under eighty words.
+"""
+
 
 # --------------------------------------------------------------------------
 # Run Data Structure
@@ -132,7 +140,8 @@ def run_tool_call(name: str, raw_arguments: str) -> tuple[Any, bool]:
 
 def run_task(client, task, model: str = LARGE.name,
              max_steps: int = 6, stall_limit: int = 2,
-             system: str = SYSTEM, week: int = 4) -> Run:
+             system: str = SYSTEM, week: int = 4,
+             use_tools: bool = True) -> Run:
     run = Run(task_id=task.id)
     t0 = time.perf_counter()
 
@@ -142,8 +151,9 @@ def run_task(client, task, model: str = LARGE.name,
     stalls = 0
 
     for _ in range(max_steps):
+        kwargs = {"tools": SCHEMAS} if use_tools else {}
         resp = client.chat.completions.create(
-            model=model, messages=messages, tools=SCHEMAS, temperature=0.0)
+            model=model, messages=messages, temperature=0.0, **kwargs)
 
         run.steps += 1
         if getattr(resp, "usage", None):
