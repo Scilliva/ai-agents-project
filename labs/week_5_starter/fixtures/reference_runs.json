@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "model": "qwen2.5:7b",
+    "runs": 3,
+    "recorded_at": "2026-08-11",
+    "machine": "Apple M4, 16 GB, Ollama, one request at a time",
+    "what_to_notice": [
+      "the baseline never goes green and costs about six times the tokens",
+      "the planner plus a narrow action goes green reliably",
+      "the reviewer does not help here, and in this recording it made things worse, because the test suite already catches what it would catch"
+    ]
+  },
+  "rows": [
+    {
+      "architecture": "A baseline",
+      "green": false,
+      "tool_calls": 10,
+      "tokens": 7454,
+      "seconds": 35.6
+    },
+    {
+      "architecture": "B planner",
+      "green": false,
+      "plan_ok": false,
+      "plan_problems": [
+        "no step runs the tests, so nothing would verify it"
+      ],
+      "applied": "applied",
+      "verdict": null,
+      "verdict_reason": null,
+      "fix": "pricing.py: if booking.start_hour > 20:\n        parts.append(\"off peak 20%\") -> if booking.start_hour >= 20:\n        parts.append(\"off peak 20%\")",
+      "tokens": 1960,
+      "seconds": 19.4
+    },
+    {
+      "architecture": "C planner+reviewer",
+      "green": false,
+      "plan_ok": false,
+      "plan_problems": [
+        "suspect_file ' discounts.py' is not one of ['booking.py', 'discounts.py', 'pricing.py', 'report.py']"
+      ],
+      "applied": "not attempted",
+      "verdict": "reject",
+      "verdict_reason": "The change introduces a wrong comparison by using `>=` instead of `>`. This is likely the cause of the failing test.",
+      "fix": "discounts.py: return start_hour > OFF_PEAK_FROM_HOUR -> return start_hour >= OFF_PEAK_FROM_HOUR",
+      "tokens": 2498,
+      "seconds": 22.8
+    },
+    {
+      "architecture": "A baseline",
+      "green": false,
+      "tool_calls": 14,
+      "tokens": 11399,
+      "seconds": 38.1
+    },
+    {
+      "architecture": "B planner",
+      "green": true,
+      "plan_ok": false,
+      "plan_problems": [
+        "no step runs the tests, so nothing would verify it"
+      ],
+      "applied": "applied",
+      "verdict": null,
+      "verdict_reason": null,
+      "fix": "discounts.py: return start_hour > OFF_PEAK_FROM_HOUR -> return start_hour >= OFF_PEAK_FROM_HOUR",
+      "tokens": 1441,
+      "seconds": 11.2
+    },
+    {
+      "architecture": "C planner+reviewer",
+      "green": false,
+      "plan_ok": false,
+      "plan_problems": [
+        "no step runs the tests, so nothing would verify it"
+      ],
+      "applied": "not attempted",
+      "verdict": "reject",
+      "verdict_reason": "The change doesn't fix the issue where the total cost calculation for a booking starting at 20 hours with resident discount results in 84.24 instead of 65.52.",
+      "fix": "discounts.py: return start_hour > OFF_PEAK_FROM_HOUR -> return start_hour >= OFF_PEAK_FROM_HOUR",
+      "tokens": 4276,
+      "seconds": 31.6
+    },
+    {
+      "architecture": "A baseline",
+      "green": false,
+      "tool_calls": 18,
+      "tokens": 12557,
+      "seconds": 46.5
+    },
+    {
+      "architecture": "B planner",
+      "green": true,
+      "plan_ok": false,
+      "plan_problems": [
+        "suspect_file ' discounts.py' is not one of ['booking.py', 'discounts.py', 'pricing.py', 'report.py']",
+        "no step runs the tests, so nothing would verify it"
+      ],
+      "applied": "applied",
+      "verdict": null,
+      "verdict_reason": null,
+      "fix": "discounts.py: return start_hour > OFF_PEAK_FROM_HOUR -> return start_hour >= OFF_PEAK_FROM_HOUR",
+      "tokens": 1854,
+      "seconds": 14.3
+    },
+    {
+      "architecture": "C planner+reviewer",
+      "green": false,
+      "plan_ok": false,
+      "plan_problems": [
+        "suspect_file ' discounts.py' is not one of ['booking.py', 'discounts.py', 'pricing.py', 'report.py']",
+        "no step runs the tests, so nothing would verify it"
+      ],
+      "applied": "not attempted",
+      "verdict": "reject",
+      "verdict_reason": "The change causes `test_off_peak_starts_at_twenty` to fail incorrectly by including bookings starting exactly at 20 hours. This contradicts the expected behavior.",
+      "fix": "discounts.py: return start_hour > OFF_PEAK_FROM_HOUR -> return start_hour >= OFF_PEAK_FROM_HOUR",
+      "tokens": 3549,
+      "seconds": 32.7
+    }
+  ]
+}

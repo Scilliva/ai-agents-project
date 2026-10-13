@@ -1,0 +1,6 @@
+# Week 5. One new dependency: the framework that replaces your week 4 loop.
+
+pydantic-ai-slim[openai]>=2.27
+openai>=1.60
+pydantic>=2.9
+pytest>=8.0
