@@ -32,8 +32,6 @@ TASK = ("A test is failing. The off-peak discount is meant to apply to "
         "bookings that start at 20:00 or later, but a booking starting "
         "exactly at 20:00 does not receive it. Fix the bug. Do not change "
         "any test file.")
-
-
 def record(arch: str, run_index: int, outcome: str, **notes) -> None:
     rec = TraceRecorder(
         week=5, case_id=f"{arch}-run{run_index}",
@@ -59,7 +57,7 @@ async def run_baseline(index: int) -> dict:
         tokens = 0
         print(f"    baseline run {index} raised {type(exc).__name__}")
     green = run_tests(work).passed
-    row = {"architecture": "A baseline", "green": green,
+    row = {"architecture": "A baseline", "run": index, "green": green,
            "tool_calls": calls, "tokens": tokens,
            "seconds": round(time.perf_counter() - t0, 1)}
     record("A-baseline", index, "ok" if green else "error", **row)
@@ -72,6 +70,23 @@ async def run_planned(index: int, with_reviewer: bool) -> dict:
     t0 = time.perf_counter()
     out = await propose(work, TASK, use_plan=True)
     fix = out["fix"]
+
+    if fix is None:
+        green = run_tests(work).passed
+        row = {"architecture": "C planner+reviewer" if with_reviewer
+               else "B planner", "run": index, "green": green,
+               "plan_ok": out["plan_ok"],
+               "plan_problems": out["plan_problems"],
+               "applied": out["applied"], "verdict": "not run",
+               "verdict_reason": "Invalid plan was refused before review.",
+               "fix": None, "tokens": out["tokens"],
+               "tokens_unavailable": out.get("tokens_unavailable", False),
+               "error": out.get("error"),
+               "seconds": round(time.perf_counter() - t0, 1)}
+        record(row["architecture"], index,
+               "ok" if green else "error", **row)
+        work.cleanup()
+        return row
 
     verdict = None
     if with_reviewer:
@@ -88,7 +103,7 @@ async def run_planned(index: int, with_reviewer: bool) -> dict:
     green = run_tests(work).passed
 
     row = {"architecture": "C planner+reviewer" if with_reviewer
-           else "B planner", "green": green,
+           else "B planner", "run": index, "green": green,
            "plan_ok": out["plan_ok"], "plan_problems": out["plan_problems"],
            "applied": applied,
            "verdict": verdict.decision if verdict else None,
@@ -133,15 +148,63 @@ def main() -> int:
 
     by_arch: dict[str, list[dict]] = {}
     for row in rows:
-        by_arch.setdefault(row["architecture"], []).append(row)
+        group = by_arch.setdefault(row["architecture"], [])
+        row.setdefault("run", len(group) + 1)
+        group.append(row)
 
     print(f"{'architecture':<22}{'green':>8}{'tokens':>10}{'seconds':>9}")
     print("-" * 50)
     for arch, group in by_arch.items():
         green = sum(bool(r["green"]) for r in group)
+        known_tokens = [r["tokens"] for r in group
+                        if not r.get("tokens_unavailable")]
+        token_mean = (f"{sum(known_tokens) / len(known_tokens):.0f}"
+                      if known_tokens else "n/a")
+        if len(known_tokens) != len(group):
+            token_mean += "*"
         print(f"{arch:<22}{green:>4}/{len(group):<3}"
-              f"{sum(r['tokens'] for r in group) // len(group):>10}"
+              f"{token_mean:>10}"
               f"{sum(r['seconds'] for r in group) / len(group):>9.1f}")
+    if any(r.get("tokens_unavailable") for r in rows):
+        print("* mean uses runs with reported token usage only; failed calls "
+              "did not expose usage, so actual token cost is unknown")
+
+    # TODO 6. Read the result, not just the table: the baseline has a much
+    # wider action space and must discover the right edit through repeated
+    # tool calls. B turns that search into one typed proposal; C adds a model
+    # call whose judgment can duplicate or contradict the deterministic test.
+    if "B planner" in by_arch and "C planner+reviewer" in by_arch:
+        b, c = by_arch["B planner"], by_arch["C planner+reviewer"]
+        b_by_run = {r["run"]: r for r in b}
+        reviewed_pairs = [(b_by_run[r["run"]], r) for r in c
+                          if r.get("verdict") in ("approve", "reject")
+                          and r.get("run") in b_by_run]
+        print("\nreviewer verdicts:")
+        for row in c:
+            print(f"  {row.get('verdict', 'not run')}: "
+                  f"{row.get('verdict_reason', 'no reason recorded')}")
+        if not reviewed_pairs:
+            print("reviewer extra cost over B: unavailable; reviewer did not "
+                  "run on any attempt")
+        else:
+            extra_seconds = sum(cr["seconds"] - br["seconds"]
+                                for br, cr in reviewed_pairs) / len(reviewed_pairs)
+            token_pairs = [(br, cr) for br, cr in reviewed_pairs
+                           if not br.get("tokens_unavailable")
+                           and not cr.get("tokens_unavailable")]
+            if len(token_pairs) == len(reviewed_pairs):
+                extra_tokens = sum(cr["tokens"] - br["tokens"]
+                                   for br, cr in token_pairs) / len(token_pairs)
+                print(f"reviewer extra cost over B (matched reviewed runs, "
+                      f"n={len(reviewed_pairs)}): {extra_tokens:.0f} tokens, "
+                      f"{extra_seconds:.1f} seconds per run")
+            else:
+                print("reviewer extra cost over B (matched reviewed runs): "
+                      f"token difference unknown, {extra_seconds:.1f} "
+                      "seconds per run")
+        print("diagnosis: A differs from B in control and action shape, not "
+              "model size; the open-ended tool loop spends calls exploring "
+              "and can lose track of the exact failing behavior.")
 
     print("\nwhat each architecture proposed:")
     for row in rows:

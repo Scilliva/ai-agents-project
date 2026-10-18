@@ -1,0 +1,109 @@
+{
+  "rows": [
+    {
+      "architecture": "A baseline",
+      "green": false,
+      "tool_calls": 0,
+      "tokens": 407,
+      "seconds": 4.2
+    },
+    {
+      "architecture": "B planner",
+      "green": true,
+      "plan_ok": true,
+      "plan_problems": [],
+      "applied": "applied",
+      "verdict": null,
+      "verdict_reason": null,
+      "fix": "discounts.py: return 0.20 if is_off_peak(booking.start_hour) else 0.0 -> return 0.20 if is_off_peak(booking.start_hour) or booking.start_hour == 20 else 0.0",
+      "tokens": 2471,
+      "seconds": 24.0
+    },
+    {
+      "architecture": "C planner+reviewer",
+      "green": false,
+      "plan_ok": true,
+      "plan_problems": [],
+      "applied": "not attempted",
+      "verdict": "reject",
+      "verdict_reason": "The change makes the test pass by granting a discount from 20:00, which is incorrect as the threshold is 20:00, not 19:00 or before.",
+      "fix": "discounts.py: return 0.20 if is_off_peak(booking.start_hour) else 0.0 -> return 0.20 if is_off_peak(booking.start_hour) or booking.start_hour == 20 else 0.0",
+      "tokens": 3179,
+      "seconds": 27.9
+    },
+    {
+      "architecture": "A baseline",
+      "green": false,
+      "tool_calls": 18,
+      "tokens": 16659,
+      "seconds": 86.2
+    },
+    {
+      "architecture": "B planner",
+      "green": false,
+      "plan_ok": false,
+      "plan_problems": [
+        "Planner output failed: UnexpectedModelBehavior: Exceeded maximum output retries (3)"
+      ],
+      "applied": null,
+      "verdict": "not run",
+      "verdict_reason": "Invalid plan was refused before review.",
+      "fix": null,
+      "tokens": 0,
+      "tokens_unavailable": true,
+      "error": "Planner output failed: UnexpectedModelBehavior: Exceeded maximum output retries (3)",
+      "seconds": 14.3
+    },
+    {
+      "architecture": "C planner+reviewer",
+      "green": false,
+      "plan_ok": false,
+      "plan_problems": [
+        "Planner output failed: UnexpectedModelBehavior: Exceeded maximum output retries (3)"
+      ],
+      "applied": null,
+      "verdict": "not run",
+      "verdict_reason": "Invalid plan was refused before review.",
+      "fix": null,
+      "tokens": 0,
+      "tokens_unavailable": true,
+      "error": "Planner output failed: UnexpectedModelBehavior: Exceeded maximum output retries (3)",
+      "seconds": 15.0
+    },
+    {
+      "architecture": "A baseline",
+      "green": false,
+      "tool_calls": 14,
+      "tokens": 11492,
+      "seconds": 92.4
+    },
+    {
+      "architecture": "B planner",
+      "green": true,
+      "plan_ok": true,
+      "plan_problems": [],
+      "applied": "applied",
+      "verdict": null,
+      "verdict_reason": null,
+      "fix": "discounts.py: return 0.20 if is_off_peak(booking.start_hour) else 0.0 -> return 0.20 if is_off_peak(booking.start_hour) or booking.start_hour == OFF_PEAK_FROM_HOUR else 0.0",
+      "tokens": 5264,
+      "seconds": 44.1
+    },
+    {
+      "architecture": "C planner+reviewer",
+      "green": false,
+      "plan_ok": false,
+      "plan_problems": [
+        "Plan must include a step that runs the tests."
+      ],
+      "applied": "plan rejected: Plan must include a step that runs the tests.",
+      "verdict": "not run",
+      "verdict_reason": "Invalid plan was refused before review.",
+      "fix": null,
+      "tokens": 1371,
+      "tokens_unavailable": false,
+      "error": null,
+      "seconds": 14.7
+    }
+  ]
+}

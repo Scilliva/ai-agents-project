@@ -50,7 +50,9 @@ class Plan(BaseModel):
     goal: str
     # TODO 1a: steps. Flat. What is the simplest type that still says
     #          "several ordered steps"?
+    steps: list[str]
     # TODO 1b: suspect_file. The file most likely to contain the bug.
+    suspect_file: str
 
 
 planner = Agent(MODEL, output_type=Plan, retries=3,
@@ -58,7 +60,10 @@ planner = Agent(MODEL, output_type=Plan, retries=3,
     "You plan a small change to a Python repository. You have NO tools and "
     "you must not attempt to act: you are producing a plan that a person "
     "will read before anything runs.\n"
-    "Keep it to between two and six steps. Name the file you suspect."))
+    "Keep it to between two and six steps. The only source files are "
+    "booking.py, discounts.py, pricing.py, and report.py. Set suspect_file "
+    "to exactly one of those filenames, without a directory or extra spaces. "
+    "Include a step to run the tests, and do not propose editing tests."))
 
 
 # --------------------------------------------------------------------------
@@ -86,7 +91,22 @@ def validate_plan(plan: Plan) -> tuple[bool, list[str]]:
     Decide what happens on a failed check, repair once or refuse, and write
     the decision in DECISIONS.md.
     """
-    raise NotImplementedError("TODO 2: validate the plan")
+    problems: list[str] = []
+    if not (2 <= len(plan.steps) <= 6):
+        problems.append("Plan must have between 2 and 6 steps.")
+    if plan.suspect_file not in KNOWN_FILES:
+        problems.append(f"Suspect file {plan.suspect_file} is not known.")
+    if not any("test" in step.lower() and any(
+            word in step.lower() for word in ("run", "verify", "check"))
+               for step in plan.steps):
+        problems.append("Plan must include a step that runs the tests.")
+    if any("test" in step.lower() and any(
+            word in step.lower() for word in
+            ("edit", "change", "modify", "update", "delete", "remove"))
+           for step in plan.steps):
+        problems.append("Plan must not propose editing a test.")
+    return not problems, problems
+
 
 
 # --------------------------------------------------------------------------
@@ -116,7 +136,10 @@ class Fix(BaseModel):
     appears in the file character for character.
     """
 
-    # TODO 3a: path, old_line, new_line, why
+    path: str
+    old_line: str
+    new_line: str
+    why: str
 
 
 fixer = Agent(MODEL, output_type=Fix, retries=3,
@@ -189,7 +212,14 @@ class Verdict(BaseModel):
 # inherits the mistake, and the second opinion stops being a second opinion.
 reviewer = Agent(MODEL, output_type=Verdict, retries=3,
                  system_prompt=(
-    "TODO 5: write these instructions"))
+    "You are an independent code reviewer. You see only a proposed one-line "
+    "diff and the failing test output; do not assume the fixer's explanation "
+    "or intent. Approve only if the diff fixes the stated boundary condition "
+    "by correcting the comparison and preserves the 20:00 threshold. Reject "
+    "changes that alter OFF_PEAK_FROM_HOUR, affect unrelated behavior, edit "
+    "tests, or appear unsupported by the failure. A change that makes the "
+    "shown test pass by granting discounts from 19:00 is wrong and must be "
+    "rejected. Give a concise reason."))
 
 
 # --------------------------------------------------------------------------
@@ -210,11 +240,28 @@ async def propose(work: Work, task: str, use_plan: bool) -> dict:
 
     context = ""
     if use_plan:
-        r = await planner.run(task)
+        try:
+            r = await planner.run(task)
+        except Exception as exc:  # noqa: BLE001
+            # A malformed structured response is a measured failed run, not
+            # a reason to lose all later repetitions and architectures.
+            out["plan_ok"] = False
+            out["plan_problems"] = [
+                f"Planner output failed: {type(exc).__name__}: {exc}"]
+            out["error"] = out["plan_problems"][0]
+            out["tokens_unavailable"] = True
+            out["seconds"] = time.perf_counter() - t0
+            return out
         out["plan"] = r.output
         out["tokens"] += r.usage.total_tokens or 0
         ok, problems = validate_plan(r.output)
         out["plan_ok"], out["plan_problems"] = ok, problems
+        print("Generated plan (before any change):")
+        print(r.output.model_dump_json(indent=2))
+        if not ok:
+            out["applied"] = "plan rejected: " + "; ".join(problems)
+            out["seconds"] = time.perf_counter() - t0
+            return out
         context = (f"A plan has already been made. Suspect file: "
                    f"{r.output.suspect_file}. Goal: {r.output.goal}\n")
         source_name = (r.output.suspect_file if r.output.suspect_file

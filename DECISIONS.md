@@ -328,8 +328,6 @@ The baseline used a separate system prompt without the tool instructions, since 
 
 ### 5. The four findings
 
-### 5. The four findings
-
 | finding | result |
 | tool abuse on T-08 | none (answered directly with 0 tool calls, passed) |
 | invention on T-10 | yes (qwen2.5:7b), after one search |
@@ -367,3 +365,88 @@ what a security backlog is.]
 ### Deferred
 
 [Anything you did not get to, and why.]
+
+## Week 5
+
+**Run conditions.** model: qwen2.5:7b | framework: Pydantic AI 2.55.0 |
+Python: 3.14.7 | served by: Ollama locally | live run date: 2026-10-18 |
+runs per architecture: 3. Reference recording date: 2026-08-11. Live results:
+`artifacts/week05_architectures.json`.
+
+### 1. The plan schema
+
+What I tried first, and what happened:
+
+The lab brief reports that a nested list of `Step` objects repeatedly raised
+`Exceeded maximum output retries` on the named model. I used a shallow
+`Plan` with `goal: str`, `steps: list[str]`, and `suspect_file: str`; I did
+not run the nested schema independently. In the live run, the flat schema
+produced valid plans in some attempts, but two planner attempts exhausted
+output retries and failed to produce valid structured output.
+
+What I shipped, and why it is shaped that way:
+
+The flat ordered strings carry enough detail for a person to inspect the plan
+while keeping the structured output simple.
+
+### 2. The validator
+
+| check | what it catches |
+| | |
+| 2–6 steps | Empty, underspecified, or unbounded plans |
+| Known suspect file | Misspelled or nonexistent source paths |
+| Test verification step | Plans with no test run/check step |
+| No test edits | Plans proposing edits, updates, or removal of tests |
+
+On a failed check the current implementation refuses before requesting a fix,
+because executing an invalid plan would defeat the free validation gate. A
+deliberately broken plan with an unknown file and a test edit returned
+`False` and listed both problems. The reference recording predates this
+fail-closed behavior: it records fixes proceeding despite `plan_ok: false`.
+
+### 3. The three-way table
+
+| architecture | reference green | reference tokens / seconds | live green | live tokens / seconds |
+| A baseline | 0/3 | 10,470 / 40.1 | 0/3 | 9,519 / 60.9 |
+| B planner | 2/3 | 1,752 / 15.0 | 2/3 | 3,868* / 27.5 |
+| C planner + reviewer | 0/3 | 3,441 / 29.0 | 0/3 | 2,275* / 19.2 |
+
+`*` Live mean uses the two runs with reported token usage. Run 2 for both B
+and C failed before token usage was available, so their actual mean token
+costs are unknown.
+
+### 4. Why the baseline fails
+
+The baseline gives the model an open-ended tool loop, so it spends many calls
+exploring and revising edits; the planner narrows the action to one structured
+line proposal that can be checked and applied deterministically.
+
+### 5. The reviewer
+
+In the live runs, the reviewer ran once: it rejected the proposed fix even
+though that fix made the tests pass, claiming a 20:00 booking should not
+receive the discount. In the other two C runs it was not called because the
+plan was rejected (one omitted a test-running step; one exhausted structured
+output retries). The reference reviewer also rejected all three proposals.
+
+For this task I would ship B: it went green in 2/3 live runs, while C went
+green in 0/3. In the one live run where C reviewed the same successful B
+proposal, the reviewer added 708 tokens and 3.9 seconds, then blocked the fix.
+The all-run C average is not a fair estimate of reviewer overhead because it
+includes two runs that stopped before review.
+
+The case where it would earn its cost:
+
+The reviewer could earn its cost when important requirements are not covered
+by the test suite, such as a security or policy constraint that a passing
+test suite cannot evaluate.
+
+### 6. What my verifier cannot catch
+
+The tests could miss lowering `OFF_PEAK_FROM_HOUR` from 20 to 19: the 20:00
+case would pass, but bookings starting at 19:00 would wrongly receive the
+discount unless a test covers that boundary.
+
+### Deferred
+
+Task B.
