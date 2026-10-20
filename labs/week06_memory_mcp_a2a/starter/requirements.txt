@@ -1,0 +1,13 @@
+# Week 6. One new dependency, and it needs a pre-release flag.
+#
+# The stable v1 line has no MCPServer class, so an unpinned install resolves
+# to something that cannot run mcp_server.py. Install it with:
+#
+#     pip install --pre -r requirements.txt
+
+mcp==2.0.0rc1
+
+pydantic-ai-slim[openai]>=2.27
+openai>=1.60
+pydantic>=2.9
+pytest>=8.0
