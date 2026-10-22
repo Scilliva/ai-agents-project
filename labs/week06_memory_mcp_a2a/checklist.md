@@ -29,9 +29,9 @@ Six items. The last one is the one that matters.
       protocol is stateless
 - [ ] No `Mcp-Session-Id` anywhere in your own code, and a comment naming
       revision 2026-07-28 wherever you rely on it
-- [ ] The identical raw request answered by the stateless server (200, no
-      session header) and refused by the same server in session mode
-      (400, "Missing session ID"), and you can quote the error
+- [ ] The identical legacy raw request answered by the stateless transport
+      (200, no session header) and refused in session mode (400,
+      "Bad Request: Missing session ID"), and you can quote the error
 
 **If your third check in `02_stateless.py` passes in both modes**, you have
 rebuilt the broken version of this demonstration. A demonstration that

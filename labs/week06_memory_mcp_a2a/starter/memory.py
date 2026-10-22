@@ -1,4 +1,4 @@
-"""The memory store, and the handle. TODO 1 to 3.
+"""The memory store, and the handle.
 
 Two things live here and they are easy to confuse.
 
@@ -17,6 +17,7 @@ with a name the model can see.
 from __future__ import annotations
 
 import json
+import re
 import secrets
 import time
 from dataclasses import dataclass, field
@@ -48,11 +49,11 @@ class MemoryStore:
     cases: dict[str, str] = field(default_factory=dict)
 
     # ----------------------------------------------------------------
-    # TODO 1. Writing, and the handle it returns.
+    # Writing, and the handle it returns.
     # ----------------------------------------------------------------
 
     def write(self, subject: str, kind: str, text: str) -> str:
-        """TODO 1. Append one fact and return a handle for it.
+        """Append one fact and return a handle for it.
 
         Three decisions here, and all three go in DECISIONS.md with a reason.
 
@@ -69,14 +70,22 @@ class MemoryStore:
         and the wrong one for a real service holding residents' data. If you
         keep it, say so rather than leaving it unsaid.
         """
-        raise NotImplementedError("TODO 1: append a fact, return a handle")
+        # Keep writes for auditability. Random handles avoid exposing record
+        # counts or making adjacent records guessable. This lab store has no
+        # expiry policy; the retention trade-off is recorded by the student.
+        handle = f"fact-{secrets.token_urlsafe(18)}"
+        self.facts.append(Fact(
+            subject=subject, kind=kind, text=text, handle=handle,
+            written_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())))
+        self.save()
+        return handle
 
     # ----------------------------------------------------------------
-    # TODO 2. Searching, and what k costs.
+    # Searching, and what k costs.
     # ----------------------------------------------------------------
 
     def search(self, subject: str, query: str, k: int = 3) -> list[str]:
-        """TODO 2. Return at most k remembered facts about ONE subject.
+        """Return at most k remembered facts about ONE subject.
 
         Scope to the subject BEFORE you score anything. That is not an
         optimization, it is the boundary that stops one resident's memory
@@ -90,14 +99,26 @@ class MemoryStore:
         Then answer, at the checkpoint: what does k cost you in tokens per
         call, and what happens when the store holds four hundred facts?
         """
-        raise NotImplementedError("TODO 2: search, scoped to the subject")
+        if k <= 0 or not query.strip():
+            return []
+        terms = set(re.findall(r"\w+", query.casefold()))
+        # Enforce the privacy boundary before scoring relevance.
+        scoped = [fact for fact in self.facts if fact.subject == subject]
+        scored = []
+        for index, fact in enumerate(scoped):
+            words = set(re.findall(r"\w+", f"{fact.kind} {fact.text}".casefold()))
+            overlap = len(terms & words)
+            if overlap:
+                scored.append((overlap, index, fact.text))
+        scored.sort(key=lambda item: (-item[0], -item[1]))
+        return [text for _, _, text in scored[:k]]
 
     # ----------------------------------------------------------------
-    # TODO 3. Forgetting, which is not optional.
+    # Forgetting, which is not optional.
     # ----------------------------------------------------------------
 
     def forget(self, handle: str) -> bool:
-        """TODO 3. Hard delete by handle. Return whether it existed.
+        """Hard delete by handle. Return whether it existed.
 
         Not optional. A store that can only be written to is not a store you
         can operate, and "we keep everything forever" is an answer with a
@@ -107,7 +128,12 @@ class MemoryStore:
         already copied into a running conversation's messages. Deleting the
         fact does not un-say it.
         """
-        raise NotImplementedError("TODO 3: hard delete by handle")
+        old_size = len(self.facts)
+        self.facts = [fact for fact in self.facts if fact.handle != handle]
+        deleted = len(self.facts) < old_size
+        if deleted:
+            self.save()
+        return deleted
 
     # ----------------------------------------------------------------
     # The handle, which is block 2's subject

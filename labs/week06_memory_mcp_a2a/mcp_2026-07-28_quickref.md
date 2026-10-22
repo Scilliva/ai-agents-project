@@ -146,8 +146,9 @@ Three things the specification does not tell you and the SDK does:
 - Host and port are keyword arguments to `run_streamable_http_async`, not
   fields on `app.settings`. Assigning `app.settings.port` raises
   `ValueError: "Settings" object has no field "port"`.
-- **`stateless_http=True` is not the default.** Omit it and the server runs
-  the old session-based model while your code claims otherwise. The
-  difference is visible at the wire and `02_stateless.py` measures it:
-  stateless returns 200 with no session header, session mode returns 400 and
-  `Bad Request: Missing session ID` to the identical request.
+- **`stateless_http=True` is not the default.** It controls the legacy
+  Streamable HTTP transport. In `mcp==2.0.0rc1`, requests declaring
+  `2026-07-28` use the modern per-request handler regardless of this flag.
+  `02_stateless.py` therefore compares the legacy transport with the same
+  raw `tools/list` request: stateless returns 200 with no session header;
+  session mode returns 400 with `Bad Request: Missing session ID`.

@@ -1,4 +1,4 @@
-"""Block 2, first half: call the memory tools over MCP. TODO 6.
+"""Block 2, first half: call the memory tools over MCP.
 
     python mcp_server.py &          # in one terminal
     PORT=8001 python mcp_server.py & # and a second instance
@@ -29,7 +29,7 @@ async def call(port: int, tool: str, **args):
 
 
 async def main() -> int:
-    """TODO 6. Three steps, and the third has a warning attached.
+    """Three steps, and the third has a warning attached.
 
     1. Connect to :8000 and print the tool catalog. Seeing it arrive over
        HTTP is what makes the boundary real: these tools are not in this
@@ -47,8 +47,24 @@ async def main() -> int:
     file is a file. 02_stateless.py is the demonstration that actually
     distinguishes the two, and it is the next thing you run.
     """
-    raise NotImplementedError("TODO 6: list the catalog, then use a handle "
-                              "across two instances")
+    async with Client("http://127.0.0.1:8000/mcp") as client:
+        catalog = await client.list_tools()
+    tools = getattr(catalog, "tools", catalog)
+    print(f"tools on :8000: {sorted(tool.name for tool in tools)}")
+
+    handle = text_of(await call(8000, "open_case", subject=SUBJECT))
+    print(f"case handle from :8000: {handle}")
+    fact_handle = text_of(await call(
+        8000, "remember", subject=SUBJECT, kind="home",
+        fact="reported a broken heater"))
+    print(f"fact handle from :8000: {fact_handle}")
+
+    subject = text_of(await call(8001, "case_subject", handle=handle))
+    print(f"case subject resolved on :8001: {subject}")
+    recalled = await call(8001, "recall", subject=subject,
+                          query="broken heater", k=3)
+    print(f"recall on :8001: {text_of(recalled)}")
+    return 0
 
 
 if __name__ == "__main__":

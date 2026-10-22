@@ -1,0 +1,22 @@
+{
+  "facts": [
+    {
+      "subject": "A. Muller",
+      "kind": "home",
+      "text": "reported a broken heater",
+      "handle": "fact-BnHjiJw9bgoFSJmNgBxzGDXa",
+      "written_at": "2026-10-22T08:34:31Z"
+    },
+    {
+      "subject": "A. Muller",
+      "kind": "home",
+      "text": "reported a broken heater",
+      "handle": "fact-sRNsDhOHXFavuBCnbcNBo9Jj",
+      "written_at": "2026-10-22T10:46:35Z"
+    }
+  ],
+  "cases": {
+    "case-8ceb8fbc97f6": "A. Muller",
+    "case-ab2fba8f8e78": "A. Muller"
+  }
+}

@@ -450,3 +450,80 @@ discount unless a test covers that boundary.
 ### Deferred
 
 Task B.
+
+## Week 6
+
+**Run conditions.** MCP SDK version: `mcp==2.0.0rc1` | specification revision: 2026-07-28 | model: qwen2.5:7b | served locally | date: 2026-10-22
+
+### 1. The handle
+
+Format I chose: case handles are `case-` plus 12 random hexadecimal
+characters. Fact handles use `fact-` plus a URL-safe random token.
+
+A guessable handle could let someone access another case's data. The case
+handle is not an authorization check.
+
+### 2. Conflict and retention
+
+- A write that contradicts an older fact: keep both, because the earlier
+  value and the correction remain available rather than silently erasing
+  history.
+- How long a record lives: indefinitely, until explicitly forgotten, because
+  this teaching store has no expiry mechanism and persistence is the point of
+  the exercise. A real service needs a defined retention limit.
+
+Nothing expires by default in this implementation.
+
+[Nothing expires by default. If you kept it that way, say so explicitly
+rather than leaving it unsaid. An undeclared retention policy is still a
+retention policy.]
+
+### 3. What k costs
+
+k = 3. Tokens added per call: not measured separately. It depends on the returned facts.
+In my comparison, recall returned "reported a broken heater" twice, so the "memory on" prompt included that fact twice.
+
+At four hundred facts in the store, search still returns at most three facts, but scans the store linearly before ranking matches.
+
+### 4. Memory off against memory on
+
+| | tokens | turns to finish |
+| memory off | 188 | 2 |
+| memory on | 81 | 1 |
+
+In this comparison, "memory on" used less total tokens and one less turn to finish.
+Recall returned the same fact twice, so "memory on" prompt included duplicate context.
+
+[The interesting result is usually that memory costs more tokens per call
+and fewer calls per task. Whether that is a win depends on the task, and
+saying which way it went for you is the entry.]
+
+### 5. The protocol, at the wire
+
+| server mode | status | Mcp-Session-Id | answered |
+| stateless_http=True | 200 | none | yes |
+| stateless_http=False | 400 | present | no |
+
+The error the session-mode server returned, quoted exactly:
+
+`Bad Request: Missing session ID`
+
+Why the two-server handle demonstration does not prove this on its own:
+
+Each client call opens a fresh connection, while both server instances read
+the same file-backed store. That demonstrates shared persistence, not whether
+the protocol carries a session.
+
+### 6. What forget does not reach
+
+Deleting the fact removes it from the store but cannot remove copies already
+present in a running conversation's messages. A resident's deletion request
+therefore also requires handling those conversation records separately.
+
+[Deleting the fact does not un-say it: anything already copied into a
+running conversation's messages is still there. Say what that means for a
+resident who asks you to delete something.]
+
+### Deferred
+
+Building the A2A channel

@@ -1,10 +1,12 @@
-"""Block 2's demonstration: the protocol core, at the wire. TODO 7.
+"""Block 2's demonstration: the protocol core, at the wire.
 
     python 02_stateless.py
 
-One raw HTTP request, with no SDK client in the way, sent twice: once to a
-server running the 2026-07-28 stateless core, and once to the same server
-put back into session mode. Same bytes, same tools, same everything else.
+One raw HTTP request, with no SDK client in the way, sent twice to the legacy
+Streamable HTTP transport: once with stateless transport enabled and once
+with session transport enabled. In mcp==2.0.0rc1, a request declaring
+protocol 2026-07-28 uses the modern stateless handler regardless of the
+`stateless_http` setting, so it cannot distinguish that transport setting.
 
 This replaces an earlier version of this demonstration that started two
 servers, alternated a client between them, and showed that a case handle
@@ -44,28 +46,29 @@ def serve(port: int, stateless: bool) -> None:
         host="127.0.0.1", port=port, stateless_http=stateless))
 
 
-# The request that carries its own context. Note what is in `params`: the
-# protocol version, who the client is, and what it can do. Under the old
-# protocol none of this was here, because it had been established once
-# during an `initialize` handshake and then remembered by the server. Moving
-# it into every request is exactly what "self-describing" means, and it is
-# what makes the request routable to any instance.
-# TODO 7a. Build the self-describing request.
-#
-# A `tools/list` call, JSON-RPC 2.0. The interesting part is `params`: it has
-# to carry its own protocolVersion, clientInfo, and capabilities, because
-# under this revision there is no handshake that established them earlier.
-# Look at the specification for the exact field names before you guess.
-SELF_DESCRIBING = {}   # TODO 7a
+# The identical legacy-era tools/list request is used in both runs. It has no
+# initialize handshake or session id, so the session transport must reject it
+# while the stateless transport can serve it. A 2026-07-28 request cannot
+# demonstrate this flag in mcp==2.0.0rc1: modern requests bypass the legacy
+# session manager and are stateless by construction.
+RAW_REQUEST = {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/list",
+    "params": {},
+}
 
 
 def raw_post(port: int, body: dict) -> tuple[int, dict[str, str], str]:
     """One HTTP request. No SDK, because the SDK is what hides the headers."""
+    # No protocol-version header routes this legacy request to the SDK's
+    # Streamable HTTP session manager in both modes.
+    headers = {"Content-Type": "application/json",
+               "Accept": "application/json, text/event-stream"}
     request = urllib.request.Request(
         f"http://127.0.0.1:{port}/mcp",
         data=json.dumps(body).encode(),
-        headers={"Content-Type": "application/json",
-                 "Accept": "application/json, text/event-stream"},
+        headers=headers,
         method="POST")
     try:
         with urllib.request.urlopen(request, timeout=15) as response:
@@ -80,7 +83,7 @@ def ask(stateless: bool, port: int) -> dict:
     process.start()
     time.sleep(4)
     try:
-        status, headers, body = raw_post(port, SELF_DESCRIBING)
+        status, headers, body = raw_post(port, RAW_REQUEST)
         lower = {k.lower(): v for k, v in headers.items()}
         return {"stateless": stateless, "status": status,
                 "session_id": lower.get("mcp-session-id"),
@@ -105,7 +108,7 @@ def main() -> int:
         print(f"  {'stateless' if row['stateless'] else 'session  '} body: "
               f"{row['body'][:110]}")
 
-    # TODO 7b. Three checks. The third is the one that matters.
+    # Three checks. The third is the one that matters.
     #
     # A demonstration is only worth running if it FAILS when the thing being
     # demonstrated is switched off. An earlier version of this block started
@@ -117,7 +120,14 @@ def main() -> int:
     # session mode. If your third check passes in both modes, you have
     # rebuilt the broken version.
     stateless, session = rows
-    checks = {}   # TODO 7b
+    checks = {
+        "stateless request answered": stateless["status"] == 200
+        and stateless["answered"],
+        "stateless response has no session id": stateless["session_id"] is None,
+        "same request rejected in session mode": session["status"] == 400
+        and session["session_id"] is not None
+        and "Missing session ID" in session["body"],
+    }
     print()
     for name, passed in checks.items():
         print(f"  [{'PASS' if passed else 'FAIL'}] {name}")
