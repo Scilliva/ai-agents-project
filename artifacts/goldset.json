@@ -763,6 +763,198 @@
         "plausible-wrong-fix"
       ],
       "must_refuse": false
+    },
+    {
+      "case_id": "Q01",
+      "week_added": 7,
+      "question": "How much does a resident parking vignette cost per year?",
+      "expected": {
+        "gold_sections": [
+          "RB-VIGNETTE::Fees"
+        ]
+      },
+      "expected_behavior": "answers from the named sections and cites them",
+      "slice_tags": [
+        "task:retrieval",
+        "distractor",
+        "superseded"
+      ],
+      "must_refuse": false
+    },
+    {
+      "case_id": "Q02",
+      "week_added": 7,
+      "question": "I have been asked to fill in form RB-1140b. What is it for?",
+      "expected": {
+        "gold_sections": [
+          "RB-VIGNETTE::How to apply"
+        ]
+      },
+      "expected_behavior": "answers from the named sections and cites them",
+      "slice_tags": [
+        "task:retrieval",
+        "rare-token"
+      ],
+      "must_refuse": false
+    },
+    {
+      "case_id": "Q03",
+      "week_added": 7,
+      "question": "Within how many days of moving in must I declare my arrival?",
+      "expected": {
+        "gold_sections": [
+          "RB-ARRIVEE::Deadline"
+        ]
+      },
+      "expected_behavior": "answers from the named sections and cites them",
+      "slice_tags": [
+        "task:retrieval",
+        "easy"
+      ],
+      "must_refuse": false
+    },
+    {
+      "case_id": "Q04",
+      "week_added": 7,
+      "question": "Which bin do grass and hedge cuttings go in, and when is it collected?",
+      "expected": {
+        "gold_sections": [
+          "RB-DECHETS::Green waste"
+        ]
+      },
+      "expected_behavior": "answers from the named sections and cites them",
+      "slice_tags": [
+        "task:retrieval",
+        "vocabulary"
+      ],
+      "must_refuse": false
+    },
+    {
+      "case_id": "Q05",
+      "week_added": 7,
+      "question": "I have just moved to Remerbaach and I own a car. What do I have to do at the commune?",
+      "expected": {
+        "gold_sections": [
+          "RB-ARRIVEE::Deadline",
+          "RB-VIGNETTE::How to apply"
+        ]
+      },
+      "expected_behavior": "answers from the named sections and cites them",
+      "slice_tags": [
+        "task:retrieval",
+        "multi-document"
+      ],
+      "must_refuse": false
+    },
+    {
+      "case_id": "Q06",
+      "week_added": 7,
+      "question": "Do I need to pay for the communal shuttle bus?",
+      "expected": {
+        "gold_sections": [
+          "RB-TRANSPORT::Fares"
+        ]
+      },
+      "expected_behavior": "answers from the named sections and cites them",
+      "slice_tags": [
+        "task:retrieval",
+        "negation"
+      ],
+      "must_refuse": false
+    },
+    {
+      "case_id": "Q07",
+      "week_added": 7,
+      "question": "What proof of income does the childcare voucher application need?",
+      "expected": {
+        "gold_sections": [
+          "RB-CSA::Documents required"
+        ]
+      },
+      "expected_behavior": "answers from the named sections and cites them",
+      "slice_tags": [
+        "task:retrieval",
+        "easy"
+      ],
+      "must_refuse": false
+    },
+    {
+      "case_id": "Q08",
+      "week_added": 7,
+      "question": "Do I need a building permit for a twelve square metre garden shed?",
+      "expected": {
+        "gold_sections": [
+          "RB-BATIR::When a permit is required"
+        ]
+      },
+      "expected_behavior": "answers from the named sections and cites them",
+      "slice_tags": [
+        "task:retrieval",
+        "numeric"
+      ],
+      "must_refuse": false
+    },
+    {
+      "case_id": "Q09",
+      "week_added": 7,
+      "question": "How much does a copy of a birth certificate cost?",
+      "expected": {
+        "gold_sections": [
+          "RB-ETATCIVIL::Fees"
+        ]
+      },
+      "expected_behavior": "answers from the named sections and cites them",
+      "slice_tags": [
+        "task:retrieval",
+        "distractor"
+      ],
+      "must_refuse": false
+    },
+    {
+      "case_id": "Q10",
+      "week_added": 7,
+      "question": "Who has to clear the snow on the pavement in front of a rented house?",
+      "expected": {
+        "gold_sections": [
+          "RB-HIVER::Obligations of residents"
+        ]
+      },
+      "expected_behavior": "answers from the named sections and cites them",
+      "slice_tags": [
+        "task:retrieval",
+        "easy"
+      ],
+      "must_refuse": false
+    },
+    {
+      "case_id": "Q11",
+      "week_added": 7,
+      "question": "By when must I declare my dog to the commune?",
+      "expected": {
+        "gold_sections": [
+          "RB-TAXES::Dog tax"
+        ]
+      },
+      "expected_behavior": "answers from the named sections and cites them",
+      "slice_tags": [
+        "task:retrieval",
+        "easy"
+      ],
+      "must_refuse": false
+    },
+    {
+      "case_id": "Q12",
+      "week_added": 7,
+      "question": "Is there free wifi in the communal park?",
+      "expected": {
+        "gold_sections": []
+      },
+      "expected_behavior": "refuses, because the corpus cannot answer it",
+      "slice_tags": [
+        "task:retrieval",
+        "unanswerable"
+      ],
+      "must_refuse": true
     }
   ]
 }

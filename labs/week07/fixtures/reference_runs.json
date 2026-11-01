@@ -1,0 +1,235 @@
+{
+  "meta": {
+    "embed_model": "nomic-embed-text:latest",
+    "chunks": 95,
+    "chunk_size": 600,
+    "overlap": 80,
+    "k": 5,
+    "recorded_at": "2026-08-11",
+    "machine": "Apple M4, 16 GB, Ollama, Chroma in memory",
+    "what_to_notice": [
+      "ten of eleven answerable questions rank the gold chunk first, which says the task is easy rather than that the pipeline is good",
+      "Q05 needs two documents and fails on both retrievers",
+      "Q02 contradicts its own note in goldset.py: dense ranks it first and keyword twelfth"
+    ]
+  },
+  "rows": [
+    {
+      "qid": "Q01",
+      "tags": [
+        "distractor",
+        "superseded"
+      ],
+      "answerable": true,
+      "dense_rank": 1,
+      "dense_recall": 1.0,
+      "keyword_rank": 3,
+      "keyword_recall": 1.0,
+      "top5": [
+        "RB-VIGNETTE::Fees::0",
+        "RB-VIGNETTE-2024::Fees::0",
+        "RB-VIGNETTE::Who can apply::0",
+        "RB-VIGNETTE-2024::Who can apply::0",
+        "RB-TAXES::Fee table::1"
+      ]
+    },
+    {
+      "qid": "Q02",
+      "tags": [
+        "rare-token"
+      ],
+      "answerable": true,
+      "dense_rank": 1,
+      "dense_recall": 1.0,
+      "keyword_rank": 14,
+      "keyword_recall": 0.0,
+      "top5": [
+        "RB-VIGNETTE::How to apply::0",
+        "RB-VIGNETTE-2024::How to apply::0",
+        "RB-VIGNETTE-2024::(intro)::0",
+        "RB-ETATCIVIL::What the office issues::0",
+        "RB-ETATCIVIL::How to request::0"
+      ]
+    },
+    {
+      "qid": "Q03",
+      "tags": [
+        "easy"
+      ],
+      "answerable": true,
+      "dense_rank": 1,
+      "dense_recall": 1.0,
+      "keyword_rank": 1,
+      "keyword_recall": 1.0,
+      "top5": [
+        "RB-ARRIVEE::Deadline::0",
+        "RB-ARRIVEE::Who must declare::0",
+        "RB-ARRIVEE::Deadline::1",
+        "RB-ARRIVEE::What happens next::0",
+        "RB-VIGNETTE-2024::How to apply::0"
+      ]
+    },
+    {
+      "qid": "Q04",
+      "tags": [
+        "vocabulary"
+      ],
+      "answerable": true,
+      "dense_rank": 1,
+      "dense_recall": 1.0,
+      "keyword_rank": 1,
+      "keyword_recall": 1.0,
+      "top5": [
+        "RB-DECHETS::Green waste::0",
+        "RB-DECHETS::Bins issued to each household::0",
+        "RB-DECHETS::Bins issued to each household::1",
+        "RB-DECHETS::Collection calendar::0",
+        "RB-HIVER::Grit bins::0"
+      ]
+    },
+    {
+      "qid": "Q05",
+      "tags": [
+        "multi-document"
+      ],
+      "answerable": true,
+      "dense_rank": 22,
+      "dense_recall": 0.0,
+      "keyword_rank": 17,
+      "keyword_recall": 0.0,
+      "top5": [
+        "RB-ARRIVEE::Who must declare::0",
+        "RB-TRANSPORT::The communal shuttle::0",
+        "RB-ARRIVEE::(intro)::0",
+        "RB-TRANSPORT::(intro)::0",
+        "RB-HIVER::What the commune clears::1"
+      ]
+    },
+    {
+      "qid": "Q06",
+      "tags": [
+        "negation"
+      ],
+      "answerable": true,
+      "dense_rank": 1,
+      "dense_recall": 1.0,
+      "keyword_rank": 5,
+      "keyword_recall": 1.0,
+      "top5": [
+        "RB-TRANSPORT::Fares::0",
+        "RB-TRANSPORT::The communal shuttle::0",
+        "RB-TRANSPORT::The communal shuttle::1",
+        "RB-TRANSPORT::School transport::0",
+        "RB-TRANSPORT::Accessibility::0"
+      ]
+    },
+    {
+      "qid": "Q07",
+      "tags": [
+        "easy"
+      ],
+      "answerable": true,
+      "dense_rank": 1,
+      "dense_recall": 1.0,
+      "keyword_rank": 3,
+      "keyword_recall": 1.0,
+      "top5": [
+        "RB-CSA::Documents required::0",
+        "RB-CSA::What the voucher covers::0",
+        "RB-CSA::Renewal::0",
+        "RB-CSA::What the voucher covers::1",
+        "RB-CSA::Where to apply::0"
+      ]
+    },
+    {
+      "qid": "Q08",
+      "tags": [
+        "numeric"
+      ],
+      "answerable": true,
+      "dense_rank": 1,
+      "dense_recall": 1.0,
+      "keyword_rank": 1,
+      "keyword_recall": 1.0,
+      "top5": [
+        "RB-BATIR::When a permit is required::0",
+        "RB-BATIR::When a permit is required::1",
+        "RB-BATIR::When a permit is not required::0",
+        "RB-BATIR::Fees::0",
+        "RB-BATIR::When a permit is not required::1"
+      ]
+    },
+    {
+      "qid": "Q09",
+      "tags": [
+        "distractor"
+      ],
+      "answerable": true,
+      "dense_rank": 1,
+      "dense_recall": 1.0,
+      "keyword_rank": 2,
+      "keyword_recall": 1.0,
+      "top5": [
+        "RB-ETATCIVIL::Fees::0",
+        "RB-ETATCIVIL::Who may request a certificate::0",
+        "RB-ETATCIVIL::Fees::1",
+        "RB-ETATCIVIL::What the office issues::0",
+        "RB-TAXES::Fee table::1"
+      ]
+    },
+    {
+      "qid": "Q10",
+      "tags": [
+        "easy"
+      ],
+      "answerable": true,
+      "dense_rank": 1,
+      "dense_recall": 1.0,
+      "keyword_rank": 1,
+      "keyword_recall": 1.0,
+      "top5": [
+        "RB-HIVER::Obligations of residents::0",
+        "RB-HIVER::Grit bins::0",
+        "RB-HIVER::What the commune clears::0",
+        "RB-HIVER::Obligations of residents::1",
+        "RB-VIGNETTE::Who can apply::1"
+      ]
+    },
+    {
+      "qid": "Q11",
+      "tags": [
+        "easy"
+      ],
+      "answerable": true,
+      "dense_rank": 1,
+      "dense_recall": 1.0,
+      "keyword_rank": 12,
+      "keyword_recall": 0.0,
+      "top5": [
+        "RB-TAXES::Dog tax::0",
+        "RB-TAXES::Dog tax::1",
+        "RB-TAXES::Overview::0",
+        "RB-ARRIVEE::Who must declare::0",
+        "RB-ETATCIVIL::Marriage::0"
+      ]
+    },
+    {
+      "qid": "Q12",
+      "tags": [
+        "unanswerable"
+      ],
+      "answerable": false,
+      "dense_rank": null,
+      "dense_recall": 0.0,
+      "keyword_rank": null,
+      "keyword_recall": 0.0,
+      "top5": [
+        "RB-TRANSPORT::Fares::0",
+        "RB-VIGNETTE::Zones::0",
+        "RB-BATIR::When a permit is not required::1",
+        "RB-VIGNETTE-2024::Zones::0",
+        "RB-TRANSPORT::The communal shuttle::0"
+      ]
+    }
+  ]
+}

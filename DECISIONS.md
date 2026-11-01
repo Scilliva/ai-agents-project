@@ -527,3 +527,60 @@ resident who asks you to delete something.]
 ### Deferred
 
 Building the A2A channel
+
+## Week 7
+
+**Run conditions.** embedding model: `nomic-embed-text:latest` | dimensionality: 768 | chunk size: 600 characters | overlap: 80 characters | k: 5 | store: Chroma | date: 2026-10-27 | table from: my own machine
+
+### 1. The chunker
+
+Size 600 characters, overlap 80 characters, because the overlap preserves context across chunk boundaries while keeping the corpus to a manageable 84 chunks.
+
+### 2. The index
+
+84 chunks, 768 dimensions, 2.67 seconds for one full indexing run.
+
+### 3. The table
+
+Recall values are dense/keyword, both at k=5. The rank columns give the rank of the first gold chunk.
+
+| qid | dense rank | keyword rank | recall@5 (dense/keyword) | tags |
+|---|---:|---:|---:|---|
+| Q01 | 1 | 2 | 1.00 / 1.00 | distractor, superseded |
+| Q02 | 1 | 4 | 1.00 / 1.00 | rare-token |
+| Q03 | 1 | 1 | 1.00 / 1.00 | easy |
+| Q04 | 1 | 1 | 1.00 / 1.00 | vocabulary |
+| Q05 | 22 | 7 | 0.00 / 0.00 | multi-document |
+| Q06 | 1 | 16 | 1.00 / 0.00 | negation |
+| Q07 | 1 | 3 | 1.00 / 1.00 | easy |
+| Q08 | 1 | 1 | 1.00 / 1.00 | numeric |
+| Q09 | 1 | 2 | 1.00 / 1.00 | distractor |
+| Q10 | 1 | 1 | 1.00 / 1.00 | easy |
+| Q11 | 1 | 5 | 1.00 / 1.00 | easy |
+| Q12 | unanswerable | — | — | unanswerable |
+
+The chunk sweep changed ranks for Q01, Q02, Q05, Q06, Q07, Q09, and Q11 when moving from size 300 to 600. From size 300 to 1200, ranks changed for Q02, Q03, Q05, Q06, Q09, and Q11. Sizes 300, 600, and 1200 produced 161, 84, and 57 chunks, respectively.
+
+### 4. Good pipeline, or easy task?
+
+Ten of eleven answerable questions ranking first is evidence that this question set is easy for this retriever, not proof that the pipeline is generally good. The largest dense advantage was Q06: rank 1 for dense retrieval and rank 16 for keyword search; the question says “pay,” while the corpus says travel is “free of charge.”
+
+### 5. The question that fails on both
+
+Question: Q05. Dense rank 22, keyword rank 7.
+
+Why it fails: Q05 combines two requests: declaring an arrival and applying for a resident parking vignette. The answer needs sections from two documents, and neither retriever ranked a gold section in its top five for the original combined query.
+
+Would any chunk size fix it? No. Chunk size changes passage boundaries, but does not split the question into its two intents. Two focused queries retrieved both gold sections (section recall 1.00), at the cost of two embedding queries instead of one; the results also included extra sections, including from the superseded vignette document.
+
+### 6. The gold-set correction
+
+The note said that the rare exact token RB-1140b makes dense retrieval lose and keyword search win.
+
+My measurement said dense ranked Q02 first and keyword ranked it fourth; both retrieved the gold section in the top five.
+
+The corrected note: This run contradicts the claim that keyword search is the better retriever for Q02. Dense ranks the gold section higher, though both retrieve it in the top five.
+
+It cost one measurement to find the mismatch. Without that measurement, the stretch exercise would have relied on a claim that did not match this run.
+
+### Deferred

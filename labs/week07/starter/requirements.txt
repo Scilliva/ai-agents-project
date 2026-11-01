@@ -1,0 +1,7 @@
+# Week 7. One new dependency: a local vector store, treated as a black box.
+
+chromadb>=1.5
+pydantic-ai-slim[openai]>=2.27
+openai>=1.60
+pydantic>=2.9
+pytest>=8.0
