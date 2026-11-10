@@ -17,6 +17,7 @@ with a name the model can see.
 from __future__ import annotations
 
 import json
+import re
 import secrets
 import time
 from dataclasses import dataclass, field
@@ -46,8 +47,6 @@ class MemoryStore:
     path: Path = DEFAULT_PATH
     facts: list[Fact] = field(default_factory=list)
     cases: dict[str, str] = field(default_factory=dict)
-    _chunks: list = field(default_factory=list, init=False, repr=False)
-    _dense_index: object | None = field(default=None, init=False, repr=False)
 
     # ----------------------------------------------------------------
     # Writing, and the handle it returns.
@@ -86,30 +85,36 @@ class MemoryStore:
     # ----------------------------------------------------------------
 
     def search(self, subject: str, query: str, k: int = 3) -> list[str]:
-        """Return at most k retrieved passages for the supplied query.
-
-        The signature stays compatible with the Week 6 memory store. The
-        Week 7 corpus is shared synthetic commune information, so retrieval
-        searches those passages rather than resident-specific saved facts.
-
-        Then answer, at the checkpoint: what does k cost you in tokens per
-        call, and what happens when the store holds four hundred facts?
-        """
         if k <= 0 or not query.strip():
             return []
-        # This Week 7 corpus is shared synthetic commune information, not
-        # resident-specific facts. Keep `subject` in the public signature
-        # expected by the application while retrieving only corpus chunks.
+
+        terms = set(re.findall(r"\w+", query.casefold()))
+        scoped = [fact for fact in self.facts if fact.subject == subject]
+        scored = []
+        for index, fact in enumerate(scoped):
+            words = set(re.findall(
+                r"\w+", f"{fact.kind} {fact.text}".casefold()
+            ))
+            overlap = len(terms & words)
+            if overlap:
+                scored.append((overlap, index, fact.text))
+        scored.sort(key=lambda item: (-item[0], -item[1]))
+        remembered = [text for _, _, text in scored[:k]]
+
+        remaining = k - len(remembered)
+        if remaining == 0:
+            return remembered
+
         from .chunking import load_chunks
         from .retrieval import DenseIndex
 
-        if self._dense_index is None:
-            self._chunks = load_chunks(size=600, overlap=80)
-            if not self._chunks:
-                return []
-            self._dense_index = DenseIndex(self._chunks, name="memory_s600")
-        hits = self._dense_index.search(query, k=k)
-        return [chunk.text for chunk in hits]
+        if not hasattr(MemoryStore, "_index"):
+            MemoryStore._index = DenseIndex(
+                load_chunks(600, 80), name="app"
+            )
+
+        retrieved = MemoryStore._index.search(query, k=remaining)
+        return remembered + [chunk.text for chunk in retrieved]
 
     # ----------------------------------------------------------------
     # Forgetting, which is not optional.
