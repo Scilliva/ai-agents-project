@@ -584,3 +584,47 @@ The corrected note: This run contradicts the claim that keyword search is the be
 It cost one measurement to find the mismatch. Without that measurement, the stretch exercise would have relied on a claim that did not match this run.
 
 ### Deferred
+
+### Integration.md stub : 
+Week 8 retry/approval and Week 9 vision/checks remain stubs until those practicals are completed.
+
+## Week 8
+
+**Run conditions.** fault seed: 42 | baseline attempts: 1 | hardened attempts: 3 | hardened base delay: 0.02 s | hardened max elapsed: 3.0 s | LangGraph: 1.2.20 | date: 2026-11-12
+
+### 1. Which errors are retryable
+
+Retryable: `ToolTimeout`, `RateLimited`, and `ServerError`, because these failures may be temporary and a later attempt may succeed.
+
+Deliberately **not** retryable: `ContractDrift`, because the call succeeded but returned data with the wrong shape. Retrying repeats a successful but incompatible response; it cannot repair the changed contract.
+
+### 2. The fault matrix
+
+| | correct | WRONG | degraded | failed |
+|---|---:|---:|---:|---:|
+| baseline | 1 | 0 | 2 | 5 |
+| hardened | 2 | 0 | 5 | 1 |
+
+What hardening actually bought: outright failures fell from five to one, while degraded outcomes rose from two to five. Correct outcomes rose from one to two because the flaky fault recovered on retry. Neither run produced a confidently wrong answer.
+
+### 3. The empty result
+
+An empty result is not an error. My pipeline treats it as a degraded answer that says no matching handbook passage was found, because an empty successful search is not a transient failure and cannot support a factual answer.
+
+### 4. The gate
+
+Gated step: the external submission (`submit_case`; the application uses the same gate for `post_invoice`). Retrieval, extraction, and drafting are not gated because they do not perform the irreversible external action.
+
+An unanswered approval in unattended mode gets the `timeout` decision and is not submitted. This fails closed and protects the resident and commune from an unapproved external action. The application returns this timeout immediately in unattended mode rather than waiting for a person.
+
+The approval payload carries the action, case ID, exact arguments, evidence, and whether information is missing or the answer is degraded. It deliberately does not carry the model’s private reasoning or an unchecked summary in place of the exact arguments and evidence.
+
+### 5. The duplicate the state does not show
+
+I put a side effect above the interrupt. It executed twice, once in each process. The recorded state showed it once.
+
+Anything before the interrupt must be read-only or safe to repeat. Put writes after approval, or make them idempotent, because resume re-executes the interrupted node from its first line even though the saved state hides the duplicate.
+
+### Deferred
+
+The OpenTelemetry trace homework is not done yet

@@ -1,38 +1,102 @@
-"""Stage: the human approval gate. Replaced in week 8.
+"""The application's approval gate for irreversible submissions.
 
-Week 8 gates exactly one step, the irreversible one, with a LangGraph
-`interrupt` and a checkpoint that a second process resumes. In this
-application the irreversible step is submitting a case, and it reaches the
-gate through one function:
-
-    request_approval(payload: dict, unattended: bool) -> dict
-
-`payload` has the shape of week 8's interrupt: `action`, `case_id`,
-`arguments` (the exact arguments, never a summary a model wrote),
-`evidence`, `degraded`, and `missing`. The return value has the shape of
-week 8's resume value: `verdict` ("approve", "edit", "reject", or
-"timeout"), `by`, and, for an edit, the edited `arguments`.
-
-`unattended` is True in batch mode, which is how week 10 runs the
-application. Nobody is there to answer, so your gate must return what week
-8 decided an unanswered approval does after its timeout, immediately,
-instead of waiting for a human who is not coming.
-
-Until you wire yours in, the gate refuses every submission. That is the
-safe default for a stub, and it means nothing irreversible can happen.
-
-This is a stage you write rather than copy, because week 8's graph runs over
-its own toy tools. Take your `submit` node from `labs/week08/starter/graph.py`
-with its `interrupt` call, give it a small graph and a `SqliteSaver` of its
-own, and write `request_approval` around it. Keep week 8's rule: above the
-interrupt, read only.
+Attended runs pause in LangGraph, show the exact payload to a person, and
+resume the same checkpoint with their approve, reject, or edit decision.
+Unattended runs fail closed immediately with a timeout decision.
 """
 
 from __future__ import annotations
 
-from .stub import stub
+import json
+import uuid
+from typing import TypedDict
+
+from langgraph.checkpoint.sqlite import SqliteSaver
+from langgraph.graph import END, START, StateGraph
+from langgraph.types import Command, interrupt
+
+from project.trace import repo_root
 
 
-@stub(week=8, does="refuses: rejects every submission, nothing is submitted")
+class _ApprovalState(TypedDict):
+    payload: dict
+    decision: dict
+
+
+def _pause_for_decision(state: _ApprovalState) -> dict:
+    """Pause before returning a human decision; do no writes before pause."""
+    decision = interrupt(state["payload"])
+    return {"decision": decision}
+
+
+def _timeout(payload: dict) -> dict:
+    return {
+        "verdict": "timeout",
+        "by": "timeout",
+        "arguments": payload.get("arguments", {}),
+    }
+
+
+def _ask_human(payload: dict) -> dict:
+    print("\nApproval required")
+    print(f"Action: {payload.get('action')}")
+    print(f"Case: {payload.get('case_id')}")
+    print(f"Arguments: {json.dumps(payload.get('arguments', {}), ensure_ascii=False)}")
+    print(f"Evidence: {json.dumps(payload.get('evidence', []), ensure_ascii=False)}")
+    print(f"Degraded: {payload.get('degraded', False)}")
+
+    while True:
+        try:
+            choice = input("Decision [approve/reject/edit]: ").strip().lower()
+        except EOFError:
+            return _timeout(payload)
+        if choice in {"approve", "reject", "edit"}:
+            break
+        print("Enter approve, reject, or edit.")
+
+    try:
+        approver = input("Approver name or ID: ").strip() or "anonymous"
+    except EOFError:
+        return _timeout(payload)
+
+    decision = {"verdict": choice, "by": approver}
+    if choice == "edit":
+        try:
+            edited = json.loads(input("Edited arguments as JSON object: "))
+        except (EOFError, json.JSONDecodeError):
+            return {"verdict": "reject", "by": approver,
+                    "arguments": payload.get("arguments", {})}
+        if not isinstance(edited, dict):
+            return {"verdict": "reject", "by": approver,
+                    "arguments": payload.get("arguments", {})}
+        decision["arguments"] = edited
+    else:
+        decision["arguments"] = payload.get("arguments", {})
+    return decision
+
+
 def request_approval(payload: dict, unattended: bool = False) -> dict:
-    return {"verdict": "reject", "by": "stub", "arguments": {}}
+    """Ask before submission; unattended requests time out without waiting."""
+    if unattended:
+        return _timeout(payload)
+
+    builder = StateGraph(_ApprovalState)
+    builder.add_node("approval", _pause_for_decision)
+    builder.add_edge(START, "approval")
+    builder.add_edge("approval", END)
+
+    checkpoint = repo_root() / "artifacts" / "app_approvals.sqlite"
+    checkpoint.parent.mkdir(parents=True, exist_ok=True)
+    config = {"configurable": {"thread_id": uuid.uuid4().hex}}
+
+    with SqliteSaver.from_conn_string(str(checkpoint)) as saver:
+        approval_graph = builder.compile(checkpointer=saver)
+        paused = approval_graph.invoke(
+            {"payload": payload, "decision": {}}, config)
+        if not paused.get("__interrupt__"):
+            return paused.get("decision") or _timeout(payload)
+
+        human_decision = _ask_human(payload)
+        completed = approval_graph.invoke(
+            Command(resume=human_decision), config)
+        return completed.get("decision") or _timeout(payload)

@@ -1,0 +1,76 @@
+{
+  "rows": [
+    {
+      "fault": "timeout",
+      "hardened": false,
+      "search_tries": 1,
+      "search_outcome": "escalated",
+      "fees_tries": 1,
+      "fees_outcome": "escalated",
+      "verdict": "failed"
+    },
+    {
+      "fault": "rate_limit",
+      "hardened": false,
+      "search_tries": 1,
+      "search_outcome": "escalated",
+      "fees_tries": 1,
+      "fees_outcome": "escalated",
+      "verdict": "failed"
+    },
+    {
+      "fault": "server_error",
+      "hardened": false,
+      "search_tries": 1,
+      "search_outcome": "escalated",
+      "fees_tries": 1,
+      "fees_outcome": "escalated",
+      "verdict": "failed"
+    },
+    {
+      "fault": "malformed",
+      "hardened": false,
+      "search_tries": 1,
+      "search_outcome": "ok",
+      "fees_tries": 1,
+      "fees_outcome": "ok",
+      "verdict": "degraded"
+    },
+    {
+      "fault": "empty",
+      "hardened": false,
+      "search_tries": 1,
+      "search_outcome": "ok",
+      "fees_tries": 1,
+      "fees_outcome": "ok",
+      "verdict": "failed"
+    },
+    {
+      "fault": "slow",
+      "hardened": false,
+      "search_tries": 1,
+      "search_outcome": "ok",
+      "fees_tries": 1,
+      "fees_outcome": "ok",
+      "verdict": "correct"
+    },
+    {
+      "fault": "drift",
+      "hardened": false,
+      "search_tries": 1,
+      "search_outcome": "ok",
+      "fees_tries": 1,
+      "fees_outcome": "ok",
+      "verdict": "degraded"
+    },
+    {
+      "fault": "flaky",
+      "hardened": false,
+      "search_tries": 1,
+      "search_outcome": "escalated",
+      "fees_tries": 1,
+      "fees_outcome": "escalated",
+      "verdict": "failed"
+    }
+  ]
+}

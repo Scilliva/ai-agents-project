@@ -1,6 +1,10 @@
 Metadata-Version: 2.4
 Name: ai-agents-project
 Version: 0.1.0
-Summary: BPINFOR-132 project spine and the fourteen practical sessions built on it
+Summary: BPINFOR-132 project spine, the application, and the fourteen practical sessions built on them
 Requires-Python: >=3.10
 Requires-Dist: pydantic<3,>=2.9
+Requires-Dist: pydantic-ai-slim[openai]>=2.27
+Requires-Dist: openai>=1.60
+Requires-Dist: langgraph>=1.2
+Requires-Dist: langgraph-checkpoint-sqlite>=3.1

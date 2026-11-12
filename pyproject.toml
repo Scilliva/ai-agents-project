@@ -17,6 +17,8 @@ dependencies = [
     "pydantic>=2.9,<3",
     "pydantic-ai-slim[openai]>=2.27",
     "openai>=1.60",
+    "langgraph>=1.2",
+    "langgraph-checkpoint-sqlite>=3.1",
 ]
 
 # Found by name rather than listed, so the install works before app/ exists

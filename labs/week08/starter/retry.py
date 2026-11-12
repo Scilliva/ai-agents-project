@@ -72,7 +72,7 @@ def is_retryable(exc: BaseException) -> bool:
     a broken credential into a slow broken credential, and on some upstreams
     into a locked account.
     """
-    raise NotImplementedError("TODO 1: which errors are retryable")
+    return isinstance(exc, (ToolTimeout, RateLimited, ServerError))
 
 
 # --------------------------------------------------------------------------
@@ -105,4 +105,78 @@ def call_with_policy(fn, *args, policy: StepPolicy, fallback=None,
     ladder skips past retrying straight to the fallback. If you find
     yourself retrying a drifted response, TODO 1 is wrong.
     """
-    raise NotImplementedError("TODO 2: the retry ladder")
+    if policy.attempts < 1:
+        raise ValueError("policy.attempts must be at least 1")
+    if policy.max_elapsed < 0 or policy.base_delay < 0:
+        raise ValueError("policy delays and elapsed limit must be non-negative")
+    if policy.on_exhausted not in {"degrade", "escalate"}:
+        raise ValueError("policy.on_exhausted must be 'degrade' or 'escalate'")
+
+    started = time.monotonic()
+    result = StepResult()
+    last_error: BaseException | None = None
+
+    for n in range(1, policy.attempts + 1):
+        try:
+            value = fn(*args, **kwargs)
+            if validate is not None:
+                validate(value)
+        except Exception as exc:  # the policy classifies known failures
+            last_error = exc
+            attempt = Attempt(n=n, error=f"{type(exc).__name__}: {exc}")
+            result.attempts.append(attempt)
+
+            # Contract drift and other non-transient failures go directly to
+            # fallback/degradation. A retry cannot repair a successful call
+            # whose response violates our contract.
+            if not is_retryable(exc) or n >= policy.attempts:
+                break
+
+            elapsed = time.monotonic() - started
+            remaining = policy.max_elapsed - elapsed
+            if remaining <= 0:
+                break
+
+            delay = policy.base_delay * (2 ** (n - 1))
+            if policy.jitter:
+                delay = random.uniform(0.0, delay)
+            if delay > remaining:
+                break
+
+            attempt.slept = delay
+            if delay:
+                time.sleep(delay)
+            continue
+
+        result.attempts.append(Attempt(n=n, error=None))
+        result.value = value
+        result.ok = True
+        result.outcome = "ok"
+        return result
+
+    if fallback is not None:
+        result.used_fallback = True
+        try:
+            value = fallback(*args, **kwargs)
+            if validate is not None:
+                validate(value)
+        except Exception as exc:  # fallback also must satisfy the contract
+            last_error = exc
+        else:
+            result.value = value
+            result.ok = True
+            result.outcome = "fallback"
+            return result
+
+    result.ok = False
+    result.outcome = ("escalated" if policy.on_exhausted == "escalate"
+                      else "degraded")
+    # Keep a failure visible to callers that inspect the attempt list, even
+    # when a fallback was attempted and also failed.
+    if last_error is not None and result.attempts:
+        result.attempts[-1].error = (
+            f"{result.attempts[-1].error}; fallback failed: "
+            f"{type(last_error).__name__}: {last_error}"
+            if result.used_fallback else result.attempts[-1].error
+        )
+    return result
