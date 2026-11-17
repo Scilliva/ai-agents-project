@@ -1,0 +1,19 @@
+# Week 9, BPINFOR-132. One new dependency on top of what you already have.
+#
+# Pillow is used twice: once by make_images.py to render the lab documents,
+# and once by perturb.py to degrade them on purpose. It is the only new
+# runtime dependency of the lab.
+pillow>=11.0
+
+# Already in your project from week 1 onwards. Pinned loosely here so that a
+# fresh clone of this folder alone still runs.
+pydantic>=2.9
+
+# No provider SDK appears here on purpose. The vision model runs locally
+# through Ollama and is reached over plain HTTP, so `vision.py` uses
+# urllib from the standard library and nothing else. The model itself is
+# not a pip dependency:
+#
+#     ollama pull qwen3-vl:4b
+#
+# It is a 3.3 GB download. Do it before the session, not during it.

@@ -1,0 +1,86 @@
+{
+ "L-01": {
+  "case_id": "L-01",
+  "score": 1.0,
+  "verdict": "pass",
+  "reason": "The actual output directly answers the input question with the same details as the expected output, including the cost and application location. All facts are e",
+  "seconds": 8.2
+ },
+ "L-02": {
+  "case_id": "L-02",
+  "score": 0.3,
+  "verdict": "fail",
+  "reason": "The actual output states a vignette cost of 85 EUR, which contradicts the expected output's stated cost of 60 EUR. This discrepancy violates the requirement to ",
+  "seconds": 3.2
+ },
+ "L-03": {
+  "case_id": "L-03",
+  "score": 0.0,
+  "verdict": "fail",
+  "reason": "The actual output mentions 'The library is open on Saturday mornings', which is entirely unrelated to the input question about the vignette cost and application",
+  "seconds": 3.1
+ },
+ "L-04": {
+  "case_id": "L-04",
+  "score": 1.0,
+  "verdict": "pass",
+  "reason": "The actual output correctly states that bulky waste is collected on the first Saturday of the month by appointment, which is explicitly present in the expected ",
+  "seconds": 3.1
+ },
+ "L-05": {
+  "case_id": "L-05",
+  "score": 0.6,
+  "verdict": "pass",
+  "reason": "The actual output states the cost of the vignette correctly as 60 EUR per year, which is present in the expected output. However, it omits the application locat",
+  "seconds": 4.2
+ },
+ "L-06": {
+  "case_id": "L-06",
+  "score": 0.4,
+  "verdict": "fail",
+  "reason": "The actual output states the cost and application method correctly, matching the expected output's cost of 60 EUR per year. However, it incorrectly mentions 'on",
+  "seconds": 4.0
+ },
+ "L-07": {
+  "case_id": "L-07",
+  "score": 0.2,
+  "verdict": "fail",
+  "reason": "The actual output does not mention the cost or application location as stated in the expected output, failing to directly answer the input question with facts e",
+  "seconds": 3.1
+ },
+ "L-08": {
+  "case_id": "L-08",
+  "score": 0.9,
+  "verdict": "pass",
+  "reason": "The actual output correctly states the cost as sixty euros and mentions the Bierger-Center as the application location, both of which are explicitly present in ",
+  "seconds": 4.3
+ },
+ "L-09": {
+  "case_id": "L-09",
+  "score": 0.7,
+  "verdict": "pass",
+  "reason": "The actual output correctly states that bulky waste is collected on the first Saturday of the month, which is explicitly present in the expected output. However",
+  "seconds": 4.5
+ },
+ "L-10": {
+  "case_id": "L-10",
+  "score": 0.2,
+  "verdict": "fail",
+  "reason": "The actual output states 'Waste is collected on Tuesdays', which does not match the expected output's specific mention of 'bulky waste' being collected on the f",
+  "seconds": 4.0
+ },
+ "L-11": {
+  "case_id": "L-11",
+  "score": 0.4,
+  "verdict": "fail",
+  "reason": "The actual output correctly states that bulky waste is collected on the first Saturday of the month, which is present in the expected output. However, it introd",
+  "seconds": 4.0
+ },
+ "L-12": {
+  "case_id": "L-12",
+  "score": 0.4,
+  "verdict": "fail",
+  "reason": "The actual output includes invented details such as 'there may be a waiting list', which is not present in the expected output and thus violates evaluation step",
+  "seconds": 3.2
+ }
+}

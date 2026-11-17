@@ -1,0 +1,21 @@
+# Week 10, BPINFOR-132. The verification stack.
+#
+# Versions checked against the local Ollama endpoint in August 2026. All of
+# these move fast, so re-check before the edition rather than trusting the
+# pins.
+deepeval>=4.1,<5
+ollama>=0.6            # the python package, imported by DeepEval's OllamaModel
+pytest>=8
+
+# RAGAS is used for the RAG-specific metrics you carried from week 7.
+ragas>=0.4,<0.5
+langchain-community<0.4   # RAGAS 0.4.x breaks above this. Not optional.
+openai>=1.60              # only as the client shape RAGAS wants for a
+                          # local endpoint. No hosted call is made.
+
+# Already in your project.
+pydantic>=2.9
+
+# No API key is needed anywhere in this file. The judge and the RAGAS
+# metrics both run against http://127.0.0.1:11434 through an OpenAI-shaped
+# client, which is why `openai` appears above.

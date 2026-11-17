@@ -1,0 +1,89 @@
+{
+  "note": "Exact values, because this file was written by the same code that rendered the pixels. Use it to score your extraction, never to prompt the model.",
+  "vat_rate": 0.17,
+  "documents": [
+    {
+      "document_id": "INV-001",
+      "document_type": "invoice",
+      "invoice_number": "INV-001-LU",
+      "invoice_date": "2026-09-14",
+      "due_date": "2026-10-14",
+      "purchase_order": "PO-2026-0431",
+      "currency": "EUR",
+      "net_amount": 1280.8,
+      "vat_amount": 217.74,
+      "total_amount": 1498.54,
+      "planted_failure_mode": "none, this is the control"
+    },
+    {
+      "document_id": "INV-002",
+      "document_type": "invoice",
+      "invoice_number": "INV-002-LU",
+      "invoice_date": "2026-09-18",
+      "due_date": "2026-10-18",
+      "purchase_order": null,
+      "currency": "EUR",
+      "net_amount": 727.35,
+      "vat_amount": 123.65,
+      "total_amount": 851.0,
+      "planted_failure_mode": "absent field: there is no purchase order number"
+    },
+    {
+      "document_id": "INV-003",
+      "document_type": "invoice",
+      "invoice_number": "INV-003-LU",
+      "invoice_date": "2026-09-21",
+      "due_date": "2026-10-21",
+      "purchase_order": "PO-2026-0447",
+      "currency": "EUR",
+      "net_amount": 965.15,
+      "vat_amount": 164.08,
+      "total_amount": 1129.23,
+      "planted_failure_mode": "low contrast, small type on the total"
+    },
+    {
+      "document_id": "INV-004",
+      "document_type": "invoice",
+      "invoice_number": "INV-004-LU",
+      "invoice_date": "2026-09-24",
+      "due_date": "2026-10-24",
+      "purchase_order": "PO-2026-0452",
+      "currency": "EUR",
+      "net_amount": 2091.4,
+      "vat_amount": 355.54,
+      "total_amount": 2446.94,
+      "planted_failure_mode": "second amount column and a repeated Total label"
+    },
+    {
+      "document_id": "INV-005",
+      "document_type": "invoice",
+      "invoice_number": "INV-005-LU",
+      "invoice_date": "2026-09-29",
+      "due_date": "2026-10-29",
+      "purchase_order": "PO-2026-0468",
+      "currency": "EUR",
+      "net_amount": 704.0,
+      "vat_amount": 119.68,
+      "total_amount": 823.68,
+      "planted_failure_mode": "instruction text addressed to the assistant"
+    },
+    {
+      "document_id": "SCREEN-01",
+      "document_type": "screenshot",
+      "active_nav_item": "Invoices",
+      "error_code": "VAT-014",
+      "error_message": "the VAT number does not match the supplier record",
+      "field_in_error": "Supplier VAT",
+      "shows_invoice": "INV-005-LU",
+      "displayed_total_incl_vat": 823.68,
+      "displayed_supplier_vat": "LU 2648 1370",
+      "correct_supplier_vat": "LU 2648 1379",
+      "empty_required_field": "Cost centre",
+      "confirmation_checkbox_ticked": false,
+      "submit_enabled": false,
+      "cancel_enabled": true,
+      "correct_next_action": "fill the Cost centre field; Submit is disabled and clicking it does nothing",
+      "planted_failure_mode": "a disabled primary button, encoded only by colour, plus an unticked checkbox"
+    }
+  ]
+}
