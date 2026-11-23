@@ -1,0 +1,148 @@
+{
+  "conditions": {
+    "model": "qwen3-vl:4b",
+    "temperature": 0.0,
+    "endpoint": "local",
+    "run_date": "2026-11-23T16:36:18+00:00",
+    "settings": {
+      "replay": false,
+      "source": "photo of a screen"
+    }
+  },
+  "variants": {
+    "clean": "the original render, no degradation",
+    "scale=0.6": "60 percent linear scale",
+    "scale=0.4": "40 percent linear scale",
+    "scale=0.4+jpeg=20": "40 percent scale, then JPEG quality 20",
+    "scale=0.4+blur=1.0": "40 percent scale, then a 1 pixel blur",
+    "scale=0.4+rotate=4": "40 percent scale, then rotated 4 degrees"
+  },
+  "sweep": {
+    "clean": {
+      "rows": [
+        {
+          "doc": "INV-006",
+          "outcome": "correct",
+          "parsed": {
+            "net": 700.0,
+            "vat": 119.0,
+            "total": 819.0
+          },
+          "checks_fired": []
+        }
+      ],
+      "tally": {
+        "correct": 1,
+        "WRONG": 0,
+        "caught": 0,
+        "refused": 0,
+        "false_alarm": 0
+      }
+    },
+    "scale=0.6": {
+      "rows": [
+        {
+          "doc": "INV-006",
+          "outcome": "correct",
+          "parsed": {
+            "net": 700.0,
+            "vat": 119.0,
+            "total": 819.0
+          },
+          "checks_fired": []
+        }
+      ],
+      "tally": {
+        "correct": 1,
+        "WRONG": 0,
+        "caught": 0,
+        "refused": 0,
+        "false_alarm": 0
+      }
+    },
+    "scale=0.4": {
+      "rows": [
+        {
+          "doc": "INV-006",
+          "outcome": "correct",
+          "parsed": {
+            "net": 700.0,
+            "vat": 119.0,
+            "total": 819.0
+          },
+          "checks_fired": []
+        }
+      ],
+      "tally": {
+        "correct": 1,
+        "WRONG": 0,
+        "caught": 0,
+        "refused": 0,
+        "false_alarm": 0
+      }
+    },
+    "scale=0.4+jpeg=20": {
+      "rows": [
+        {
+          "doc": "INV-006",
+          "outcome": "correct",
+          "parsed": {
+            "net": 700.0,
+            "vat": 119.0,
+            "total": 819.0
+          },
+          "checks_fired": []
+        }
+      ],
+      "tally": {
+        "correct": 1,
+        "WRONG": 0,
+        "caught": 0,
+        "refused": 0,
+        "false_alarm": 0
+      }
+    },
+    "scale=0.4+blur=1.0": {
+      "rows": [
+        {
+          "doc": "INV-006",
+          "outcome": "correct",
+          "parsed": {
+            "net": 700.0,
+            "vat": 119.0,
+            "total": 819.0
+          },
+          "checks_fired": []
+        }
+      ],
+      "tally": {
+        "correct": 1,
+        "WRONG": 0,
+        "caught": 0,
+        "refused": 0,
+        "false_alarm": 0
+      }
+    },
+    "scale=0.4+rotate=4": {
+      "rows": [
+        {
+          "doc": "INV-006",
+          "outcome": "correct",
+          "parsed": {
+            "net": 700.0,
+            "vat": 119.0,
+            "total": 819.0
+          },
+          "checks_fired": []
+        }
+      ],
+      "tally": {
+        "correct": 1,
+        "WRONG": 0,
+        "caught": 0,
+        "refused": 0,
+        "false_alarm": 0
+      }
+    }
+  }
+}

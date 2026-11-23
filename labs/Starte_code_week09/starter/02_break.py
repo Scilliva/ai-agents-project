@@ -22,9 +22,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "project_spine"))
 
 from checks import ALL_FIELDS, GROUPS, classify, run_checks, tally  # noqa: E402
 from perturb import SWEEP, describe  # noqa: E402
-from vision import Fixture, find_fixture, read_group  # noqa: E402
+from vision import MODEL, Fixture, find_fixture, read_group  # noqa: E402
 
-from project.trace import write_json  # noqa: E402
+from project.trace import local_conditions, write_json  # noqa: E402
 
 IMAGES = Path(__file__).resolve().parent.parent / "images"
 DOCS = ["INV-001", "INV-002", "INV-003", "INV-004", "INV-005"]
@@ -49,15 +49,15 @@ def read_doc(doc: str, variant: str, groups: dict, replay) -> tuple[dict, list]:
     return fields, results
 
 
-def sweep(replay) -> dict:
+def sweep(replay, documents=DOCS) -> dict:
     print("DEGRADATION SWEEP, scored on all three amounts\n")
-    print(f"{'variant':<20}" + "".join(f"{d[-3:]:>9}" for d in DOCS)
+    print(f"{'variant':<20}" + "".join(f"{d[-3:]:>9}" for d in documents)
           + "     WRONG")
     print("-" * 82)
     table = {}
     for variant in SWEEP:
         rows, cells = [], []
-        for doc in DOCS:
+        for doc in documents:
             fields, _ = read_doc(doc, variant, GROUPS, replay)
             report = run_checks(fields)
             outcome = classify(truth_for(doc), report)
@@ -126,7 +126,21 @@ def main() -> int:
     ap.add_argument("--replay", action="store_true")
     ap.add_argument("--sweep", action="store_true")
     ap.add_argument("--naive", action="store_true")
+    ap.add_argument("--photo", action="store_true",
+                    help="run the live sweep on my INV-006.png photograph")
     args = ap.parse_args()
+    if args.photo:
+        if args.replay or args.naive:
+            ap.error("Use --photo on its own for the live photo sweep")
+        out = {
+            "conditions": local_conditions(
+                MODEL, temperature=0.0, replay=False,
+                source="photo of a screen").model_dump(mode="json"),
+            "variants": {v: describe(v) for v in SWEEP},
+            "sweep": sweep(None, ["INV-006"]),
+        }
+        write_json("artifacts/week09_photo_sweep.json", out)
+        return 0
     if not (args.sweep or args.naive):
         args.sweep = args.naive = True
 

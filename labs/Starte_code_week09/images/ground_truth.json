@@ -84,6 +84,17 @@
       "cancel_enabled": true,
       "correct_next_action": "fill the Cost centre field; Submit is disabled and clicking it does nothing",
       "planted_failure_mode": "a disabled primary button, encoded only by colour, plus an unticked checkbox"
+    },
+    {
+      "document_id": "INV-006",
+      "document_type": "invoice",
+      "invoice_number": "INV-006-LU",
+      "purchase_order": "PO-2026-0470",
+      "currency": "EUR",
+      "net_amount": 700.0,
+      "vat_amount": 119.0,
+      "total_amount": 819.0,
+      "note": "Own template invoice photographed on a screen, saved as INV-006.png"
     }
   ]
 }

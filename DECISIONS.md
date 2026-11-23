@@ -824,3 +824,47 @@ I would also expect it to be faster, but these are guesses until I run the same 
 I would need to measure the API cost as well. 
 I would keep `guard`, the amount checks, and the approval rule in Python, because a stronger model could still read a number incorrectly or follow the note on INV-005. 
 To compare them fairly, I would use the same images and look at correct results, refusals, false alarms, time, and cost.
+
+## Homework
+
+- [x] One document of your own, photographed rather than rendered, run
+      through the sweep, and where it sits relative to the five here
+
+I made my own invoice, `INV-006-LU`, using a template from this website. I filled in the details myself and took a picture of it from my laptop screen. I saved the photo as `labs/Starte_code_week09/images/INV-006.png`. There are some screen patterns visible in the photo, which could make the text harder to read. [Invoice template](https://i24app.com/lu/invoice-template)
+
+**Run conditions.** `qwen3-vl:4b`, Ollama locally on my Apple M4 Mac 16 GB RAM, temperature `0.0`, live run on 2026-11-23. I ran `02_break.py --photo` with grouped extraction. Each row below gives the image variant. The expected amounts were net EUR 700.00, VAT EUR 119.00, and total EUR 819.00. 
+
+| variant | INV-006 result | WRONG |
+|---|---|---:|
+| clean | correct | 0 |
+| scale=0.6 | correct | 0 |
+| scale=0.4 | correct | 0 |
+| scale=0.4+jpeg=20 | correct | 0 |
+| scale=0.4+blur=1.0 | correct | 0 |
+| scale=0.4+rotate=4 | correct | 0 |
+
+My invoice passed all six variants. The model read the correct amounts every time, and no check raised a warning. Even after resizing, compression, blur, and rotation, it could still read the amounts. The results are saved in `artifacts/week09_photo_sweep.json`.
+
+I compared this with my live sweep of the five given invoices from 2026-11-17, using the same model, temperature, and variants. My photo passed all variants, like `INV-002`, `INV-004`, and `INV-005`. `INV-001` refused when resized and rotated. `INV-003` refused with compression and blur, and gave a false alarm with rotation. My photo passed those changes too, so it handled them better than `INV-003` in this run. However, this is only one photo, so I would need to test more examples before saying it works well on other photographed invoices.
+
+
+- [x] `code_triage` wired to the week 8 approval gate, so a failed check
+      routes to a human instead of printing a verdict
+
+I copied `vision.py`, `perturb.py`, and `checks.py` into `app/`. I also added `code_triage` to `app/checks.py`. `app/pipeline.py` already had the connection to the week 8 gate. Now it asks a person when `code_triage` says the invoice needs approval.
+
+**Run conditions.** Live on my Apple M4 Mac with 16 GB RAM, Ollama, `qwen3-vl:4b`, temperature `0.0`, date 2026-11-23. I ran `python -m app.run --image`. The variant was `clean`, with no added changes to the images. `INV-006` was my photo of the laptop screen.
+
+| test | result | trace ID |
+|---|---|---|
+| INV-006, total EUR 819.00 | All checks passed. The app posted it automatically. | `832e735acbce` |
+| INV-001, total EUR 1,498.54 | The total was above EUR 1,000. The gate asked for approval. I entered reject and my name, Jadwiga. The app blocked it. | `3d1402e0cfa4` |
+| INV-001 with --unattended | The gate returned timeout. The app blocked it without waiting for me. | `ab105ee924ff` |
+
+The runs are saved in `artifacts/traces.jsonl`. We also tested a deliberately wrong reading. It had net EUR 700.00, VAT EUR 119.00, and total EUR 800.00. The amounts did not add up. The check failed and the gate opened. We supplied these values in a separate test. The live runs above used the model to read the images.
+
+
+- [x] One paragraph: what fires your gate, and why it is not model
+      confidence
+
+The gate opens if a check fails, the total cannot be read, or the total is above EUR 1,000. `code_triage` applies these rules. For example, `INV-001` passed the checks but its total was above the limit, so it asked for my approval. Python uses the check results and the amount to decide. We do not use model confidence. The model could sound sure and still read a number wrong or follow the note on `INV-005`. The gate shows the values and why it opened. A person can approve, reject, or edit them. With `--unattended`, it returns timeout and holds the invoice.
