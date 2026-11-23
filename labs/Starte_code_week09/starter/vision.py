@@ -105,7 +105,32 @@ def guard(content: str, thinking: str, done_reason: str,
     file: it feeds guard() each of these on purpose and expects a refusal.
     A guard that accepts them all is worth nothing.
     """
-    raise NotImplementedError("TODO 1: guard")
+    if done_reason == "length":
+        return None, "response truncated"
+    if not content.strip():
+        reason = "empty content"
+        if thinking.strip():
+            reason += " with output in thinking"
+        return None, reason
+
+    try:
+        parsed = json.loads(content)
+    except json.JSONDecodeError:
+        return None, "invalid JSON"
+    if not isinstance(parsed, dict):
+        return None, "expected a JSON object"
+
+    missing = [name for name in fields if name not in parsed]
+    if missing:
+        return None, "missing fields: " + ", ".join(missing)
+
+    values = {name: parsed[name] for name in fields}
+    if any(value is not None and not isinstance(value, str)
+           for value in values.values()):
+        return None, "expected strings or nulls"
+    if not any(value and value.strip() for value in values.values()):
+        return None, "all requested values are blank"
+    return values, None
 
 
 # --------------------------------------------------------------------------
@@ -148,7 +173,40 @@ def read_group(image_path: Path, group: str, fields: list[str],
     # `failure` set rather than raising, then build the VisionResult with
     # the token counts and done_reason from the response, because block 2
     # needs them.
-    raise NotImplementedError("TODO 2: read_group")
+    started = time.monotonic()
+    body = {
+        "model": MODEL,
+        "stream": False,
+        "format": flat_schema(fields),
+        "options": {"temperature": 0.0},
+        "messages": [
+            {"role": "system", "content": system or SYSTEM},
+            {"role": "user",
+             "content": prompt or "Read these fields: " + ", ".join(fields),
+             "images": [encode(image_path, variant)]},
+        ],
+    }
+    request = urllib.request.Request(
+        ENDPOINT, data=json.dumps(body).encode("utf-8"),
+        headers={"Content-Type": "application/json"}, method="POST")
+
+    out = VisionResult(doc=doc, group=group, variant=variant)
+    try:
+        with urllib.request.urlopen(request, timeout=TIMEOUT_S) as response:
+            data = json.load(response)
+    except (OSError, json.JSONDecodeError) as exc:
+        out.failure = f"Ollama response failed: {exc}"
+    else:
+        message = data.get("message") or {}
+        out.raw_content = message.get("content") or ""
+        out.done_reason = data.get("done_reason") or ""
+        out.prompt_tokens = data.get("prompt_eval_count") or 0
+        out.output_tokens = data.get("eval_count") or 0
+        parsed, out.failure = guard(out.raw_content,
+                                    message.get("thinking") or "",
+                                    out.done_reason, fields)
+        out.fields = parsed or {}
+    out.elapsed_s = time.monotonic() - started
 
     if record is not None:
         record.put(out)

@@ -1,0 +1,39 @@
+{
+  "by_week": {
+    "5": {
+      "accuracy": 0.13636363636363635,
+      "consistency": 0.5,
+      "robustness": null,
+      "predictability": 0.0,
+      "safety": 0.0
+    },
+    "8": {
+      "accuracy": 0.1875,
+      "consistency": null,
+      "robustness": null,
+      "predictability": 0.7692307692307693,
+      "safety": 0.5384615384615384
+    },
+    "9": {
+      "accuracy": null,
+      "consistency": null,
+      "robustness": null,
+      "predictability": null,
+      "safety": null
+    },
+    "app": {
+      "accuracy": 0.5694444444444444,
+      "consistency": 0.7954545454545454,
+      "robustness": null,
+      "predictability": 0.45161290322580644,
+      "safety": 0.5483870967741935
+    },
+    "all": {
+      "accuracy": 0.8127490039840638,
+      "consistency": 0.8962264150943396,
+      "robustness": 1.0,
+      "predictability": 0.40425531914893614,
+      "safety": 0.43617021276595747
+    }
+  }
+}

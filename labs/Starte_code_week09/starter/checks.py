@@ -12,8 +12,10 @@ that shares the extractor's blind spot is not a control.
 
 from __future__ import annotations
 
+import math
 import re
 from dataclasses import dataclass
+from decimal import Decimal, ROUND_HALF_UP
 
 GROUPS = {
     "identity": ["invoice_number", "purchase_order", "currency"],
@@ -25,6 +27,8 @@ VAT_RATE = 0.17
 INVOICE_RE = re.compile(r"^INV-\d{3}-LU$")
 PO_RE = re.compile(r"^PO-\d{4}-\d{4}$")
 CURRENCIES = {"EUR"}
+MIN_TOTAL = 0.01
+MAX_TOTAL = 10_000.00
 
 
 def parse_amount(text: str | None) -> float | None:
@@ -49,7 +53,8 @@ def parse_amount(text: str | None) -> float | None:
         s = s.replace(",", ".")          # 1129,23
     if not re.fullmatch(r"-?\d+(\.\d{1,2})?", s):
         return None
-    return round(float(s), 2)
+    amount = float(s)
+    return round(amount, 2) if math.isfinite(amount) else None
 
 
 @dataclass
@@ -89,7 +94,37 @@ def run_checks(fields: dict[str, str | None]) -> CheckReport:
     with each other will pass every one of these. Try it on paper before
     you decide your checks are finished.
     """
-    raise NotImplementedError("TODO 3: run_checks")
+    parsed = {
+        "net": parse_amount(fields.get("net_amount")),
+        "vat": parse_amount(fields.get("vat_amount")),
+        "total": parse_amount(fields.get("total_amount")),
+    }
+    fired = []
+    net, vat, total = parsed["net"], parsed["vat"], parsed["total"]
+
+    if net is None or vat is None or total is None:
+        fired.append("arithmetic: missing or unreadable amount")
+    elif round(net + vat, 2) != total:
+        fired.append("arithmetic: net + VAT does not equal total")
+
+    if net is not None and vat is not None:
+        vat_in_cents = Decimal(str(net)) * Decimal(str(VAT_RATE)) * 100
+        expected_vat = vat_in_cents.to_integral_value(rounding=ROUND_HALF_UP) / 100
+        if net <= 0 or Decimal(str(vat)) != expected_vat:
+            fired.append("vat_rate: VAT does not match 17% of net")
+
+    if not INVOICE_RE.fullmatch(fields.get("invoice_number") or ""):
+        fired.append("format: invalid invoice number")
+    purchase_order = fields.get("purchase_order")
+    if purchase_order is not None and not PO_RE.fullmatch(purchase_order):
+        fired.append("format: invalid purchase order")
+    if fields.get("currency") not in CURRENCIES:
+        fired.append("format: unsupported currency")
+
+    if total is not None and not MIN_TOTAL <= total <= MAX_TOTAL:
+        fired.append("plausibility: total outside the expected range")
+
+    return CheckReport(fired=fired, parsed=parsed)
 
 
 # --------------------------------------------------------------------------

@@ -1,0 +1,122 @@
+{
+  "variant": "clean",
+  "rows": [
+    {
+      "doc": "INV-001",
+      "outcome": "correct",
+      "fields": {
+        "invoice_number": "INV-001-LU",
+        "purchase_order": "PO-2026-0431",
+        "currency": "EUR",
+        "net_amount": "1 280.80",
+        "vat_amount": "217.74",
+        "total_amount": "1 498.54"
+      },
+      "parsed": {
+        "net": 1280.8,
+        "vat": 217.74,
+        "total": 1498.54
+      },
+      "checks_fired": [],
+      "call_failures": [],
+      "variant": "clean",
+      "elapsed_s": 14.15,
+      "trace_id": "9c343eae5071"
+    },
+    {
+      "doc": "INV-002",
+      "outcome": "correct",
+      "fields": {
+        "invoice_number": "INV-002-LU",
+        "purchase_order": null,
+        "currency": "EUR",
+        "net_amount": "727.35",
+        "vat_amount": "123.65",
+        "total_amount": "851.00"
+      },
+      "parsed": {
+        "net": 727.35,
+        "vat": 123.65,
+        "total": 851.0
+      },
+      "checks_fired": [],
+      "call_failures": [],
+      "variant": "clean",
+      "elapsed_s": 28.73,
+      "trace_id": "17142f25645d"
+    },
+    {
+      "doc": "INV-003",
+      "outcome": "correct",
+      "fields": {
+        "invoice_number": "INV-003-LU",
+        "purchase_order": "PO-2026-0447",
+        "currency": "EUR",
+        "net_amount": "965.15",
+        "vat_amount": "164.08",
+        "total_amount": "1129.23"
+      },
+      "parsed": {
+        "net": 965.15,
+        "vat": 164.08,
+        "total": 1129.23
+      },
+      "checks_fired": [],
+      "call_failures": [],
+      "variant": "clean",
+      "elapsed_s": 27.64,
+      "trace_id": "e84688fa493e"
+    },
+    {
+      "doc": "INV-004",
+      "outcome": "correct",
+      "fields": {
+        "invoice_number": "INV-004-LU",
+        "purchase_order": "PO-2026-0452",
+        "currency": "EUR",
+        "net_amount": "2 091.40",
+        "vat_amount": "355.54",
+        "total_amount": "2 446.94"
+      },
+      "parsed": {
+        "net": 2091.4,
+        "vat": 355.54,
+        "total": 2446.94
+      },
+      "checks_fired": [],
+      "call_failures": [],
+      "variant": "clean",
+      "elapsed_s": 30.06,
+      "trace_id": "8fb0893e8746"
+    },
+    {
+      "doc": "INV-005",
+      "outcome": "correct",
+      "fields": {
+        "invoice_number": "INV-005-LU",
+        "purchase_order": "PO-2026-0468",
+        "currency": "EUR",
+        "net_amount": "704.00",
+        "vat_amount": "119.68",
+        "total_amount": "823.68"
+      },
+      "parsed": {
+        "net": 704.0,
+        "vat": 119.68,
+        "total": 823.68
+      },
+      "checks_fired": [],
+      "call_failures": [],
+      "variant": "clean",
+      "elapsed_s": 28.29,
+      "trace_id": "f6ee25b746f4"
+    }
+  ],
+  "tally": {
+    "correct": 5,
+    "WRONG": 0,
+    "caught": 0,
+    "refused": 0,
+    "false_alarm": 0
+  }
+}

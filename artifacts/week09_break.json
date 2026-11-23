@@ -1,0 +1,442 @@
+{
+  "variants": {
+    "clean": "the original render, no degradation",
+    "scale=0.6": "60 percent linear scale",
+    "scale=0.4": "40 percent linear scale",
+    "scale=0.4+jpeg=20": "40 percent scale, then JPEG quality 20",
+    "scale=0.4+blur=1.0": "40 percent scale, then a 1 pixel blur",
+    "scale=0.4+rotate=4": "40 percent scale, then rotated 4 degrees"
+  },
+  "sweep": {
+    "clean": {
+      "rows": [
+        {
+          "doc": "INV-001",
+          "outcome": "correct",
+          "parsed": {
+            "net": 1280.8,
+            "vat": 217.74,
+            "total": 1498.54
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-002",
+          "outcome": "correct",
+          "parsed": {
+            "net": 727.35,
+            "vat": 123.65,
+            "total": 851.0
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-003",
+          "outcome": "correct",
+          "parsed": {
+            "net": 965.15,
+            "vat": 164.08,
+            "total": 1129.23
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-004",
+          "outcome": "correct",
+          "parsed": {
+            "net": 2091.4,
+            "vat": 355.54,
+            "total": 2446.94
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-005",
+          "outcome": "correct",
+          "parsed": {
+            "net": 704.0,
+            "vat": 119.68,
+            "total": 823.68
+          },
+          "checks_fired": []
+        }
+      ],
+      "tally": {
+        "correct": 5,
+        "WRONG": 0,
+        "caught": 0,
+        "refused": 0,
+        "false_alarm": 0
+      }
+    },
+    "scale=0.6": {
+      "rows": [
+        {
+          "doc": "INV-001",
+          "outcome": "correct",
+          "parsed": {
+            "net": 1280.8,
+            "vat": 217.74,
+            "total": 1498.54
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-002",
+          "outcome": "correct",
+          "parsed": {
+            "net": 727.35,
+            "vat": 123.65,
+            "total": 851.0
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-003",
+          "outcome": "correct",
+          "parsed": {
+            "net": 965.15,
+            "vat": 164.08,
+            "total": 1129.23
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-004",
+          "outcome": "correct",
+          "parsed": {
+            "net": 2091.4,
+            "vat": 355.54,
+            "total": 2446.94
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-005",
+          "outcome": "correct",
+          "parsed": {
+            "net": 704.0,
+            "vat": 119.68,
+            "total": 823.68
+          },
+          "checks_fired": []
+        }
+      ],
+      "tally": {
+        "correct": 5,
+        "WRONG": 0,
+        "caught": 0,
+        "refused": 0,
+        "false_alarm": 0
+      }
+    },
+    "scale=0.4": {
+      "rows": [
+        {
+          "doc": "INV-001",
+          "outcome": "correct",
+          "parsed": {
+            "net": 1280.8,
+            "vat": 217.74,
+            "total": 1498.54
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-002",
+          "outcome": "correct",
+          "parsed": {
+            "net": 727.35,
+            "vat": 123.65,
+            "total": 851.0
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-003",
+          "outcome": "correct",
+          "parsed": {
+            "net": 965.15,
+            "vat": 164.08,
+            "total": 1129.23
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-004",
+          "outcome": "correct",
+          "parsed": {
+            "net": 2091.4,
+            "vat": 355.54,
+            "total": 2446.94
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-005",
+          "outcome": "correct",
+          "parsed": {
+            "net": 704.0,
+            "vat": 119.68,
+            "total": 823.68
+          },
+          "checks_fired": []
+        }
+      ],
+      "tally": {
+        "correct": 5,
+        "WRONG": 0,
+        "caught": 0,
+        "refused": 0,
+        "false_alarm": 0
+      }
+    },
+    "scale=0.4+jpeg=20": {
+      "rows": [
+        {
+          "doc": "INV-001",
+          "outcome": "correct",
+          "parsed": {
+            "net": 1280.8,
+            "vat": 217.74,
+            "total": 1498.54
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-002",
+          "outcome": "correct",
+          "parsed": {
+            "net": 727.35,
+            "vat": 123.65,
+            "total": 851.0
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-003",
+          "outcome": "refused",
+          "parsed": {
+            "net": 965.15,
+            "vat": 164.08,
+            "total": null
+          },
+          "checks_fired": [
+            "arithmetic: missing or unreadable amount",
+            "format: unsupported currency"
+          ]
+        },
+        {
+          "doc": "INV-004",
+          "outcome": "correct",
+          "parsed": {
+            "net": 2091.4,
+            "vat": 355.54,
+            "total": 2446.94
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-005",
+          "outcome": "correct",
+          "parsed": {
+            "net": 704.0,
+            "vat": 119.68,
+            "total": 823.68
+          },
+          "checks_fired": []
+        }
+      ],
+      "tally": {
+        "correct": 4,
+        "WRONG": 0,
+        "caught": 0,
+        "refused": 1,
+        "false_alarm": 0
+      }
+    },
+    "scale=0.4+blur=1.0": {
+      "rows": [
+        {
+          "doc": "INV-001",
+          "outcome": "correct",
+          "parsed": {
+            "net": 1280.8,
+            "vat": 217.74,
+            "total": 1498.54
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-002",
+          "outcome": "correct",
+          "parsed": {
+            "net": 727.35,
+            "vat": 123.65,
+            "total": 851.0
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-003",
+          "outcome": "refused",
+          "parsed": {
+            "net": 965.15,
+            "vat": 164.08,
+            "total": null
+          },
+          "checks_fired": [
+            "arithmetic: missing or unreadable amount",
+            "format: unsupported currency"
+          ]
+        },
+        {
+          "doc": "INV-004",
+          "outcome": "correct",
+          "parsed": {
+            "net": 2091.4,
+            "vat": 355.54,
+            "total": 2446.94
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-005",
+          "outcome": "correct",
+          "parsed": {
+            "net": 704.0,
+            "vat": 119.68,
+            "total": 823.68
+          },
+          "checks_fired": []
+        }
+      ],
+      "tally": {
+        "correct": 4,
+        "WRONG": 0,
+        "caught": 0,
+        "refused": 1,
+        "false_alarm": 0
+      }
+    },
+    "scale=0.4+rotate=4": {
+      "rows": [
+        {
+          "doc": "INV-001",
+          "outcome": "refused",
+          "parsed": {
+            "net": null,
+            "vat": null,
+            "total": null
+          },
+          "checks_fired": [
+            "arithmetic: missing or unreadable amount"
+          ]
+        },
+        {
+          "doc": "INV-002",
+          "outcome": "correct",
+          "parsed": {
+            "net": 727.35,
+            "vat": 123.65,
+            "total": 851.0
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-003",
+          "outcome": "false_alarm",
+          "parsed": {
+            "net": 965.15,
+            "vat": 164.08,
+            "total": 1129.23
+          },
+          "checks_fired": [
+            "format: unsupported currency"
+          ]
+        },
+        {
+          "doc": "INV-004",
+          "outcome": "correct",
+          "parsed": {
+            "net": 2091.4,
+            "vat": 355.54,
+            "total": 2446.94
+          },
+          "checks_fired": []
+        },
+        {
+          "doc": "INV-005",
+          "outcome": "correct",
+          "parsed": {
+            "net": 704.0,
+            "vat": 119.68,
+            "total": 823.68
+          },
+          "checks_fired": []
+        }
+      ],
+      "tally": {
+        "correct": 3,
+        "WRONG": 0,
+        "caught": 0,
+        "refused": 1,
+        "false_alarm": 1
+      }
+    }
+  },
+  "architecture": {
+    "rows": [
+      {
+        "doc": "INV-001",
+        "grouped": "correct",
+        "naive": "correct",
+        "grouped_s": 16.3,
+        "naive_s": 25.2,
+        "naive_failure": null,
+        "grouped_out_tokens": 247,
+        "naive_out_tokens": 780
+      },
+      {
+        "doc": "INV-002",
+        "grouped": "correct",
+        "naive": "correct",
+        "grouped_s": 17.4,
+        "naive_s": 12.6,
+        "naive_failure": null,
+        "grouped_out_tokens": 262,
+        "naive_out_tokens": 388
+      },
+      {
+        "doc": "INV-003",
+        "grouped": "correct",
+        "naive": "false_alarm",
+        "grouped_s": 16.8,
+        "naive_s": 25.7,
+        "naive_failure": null,
+        "grouped_out_tokens": 250,
+        "naive_out_tokens": 626
+      },
+      {
+        "doc": "INV-004",
+        "grouped": "correct",
+        "naive": "correct",
+        "grouped_s": 25.2,
+        "naive_s": 31.7,
+        "naive_failure": null,
+        "grouped_out_tokens": 326,
+        "naive_out_tokens": 646
+      },
+      {
+        "doc": "INV-005",
+        "grouped": "correct",
+        "naive": "correct",
+        "grouped_s": 20.5,
+        "naive_s": 19.6,
+        "naive_failure": null,
+        "grouped_out_tokens": 247,
+        "naive_out_tokens": 427
+      }
+    ]
+  }
+}
