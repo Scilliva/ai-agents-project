@@ -111,7 +111,16 @@ def test_judge_agrees_with_human_labels():
     metric anywhere in your report means anything, which is why it is a
     test and not a paragraph in a README.
     """
-    raise NotImplementedError("TODO 5a")
+    judgments = J.load_recorded()
+    if not judgments:
+        pytest.skip("no recorded judgments yet")
+
+    missing = {case.case_id for case in J.LABELS} - judgments.keys()
+    assert not missing, f"missing judgments for {sorted(missing)}"
+    agreement = J.validate(judgments)
+    assert agreement.rate >= 0.90, (
+        f"judge agrees with only {agreement.agreed}/{agreement.n} human labels"
+    )
 
 
 @pytest.mark.judged
@@ -122,7 +131,13 @@ def test_judge_makes_no_false_passes():
     went green on an invented answer. Forbid only the second, and say in
     one comment why you are not forbidding both.
     """
-    raise NotImplementedError("TODO 5b")
+    judgments = J.load_recorded()
+    if not judgments:
+        pytest.skip("no recorded judgments yet")
+
+    false_passes = J.validate(judgments).confusion()["false_pass"]
+    # A false pass can send invented advice to a resident. A false fail gets reviewed.
+    assert false_passes == 0, f"judge incorrectly passed {false_passes} human-failed answers"
 
 
 @pytest.mark.judged
@@ -134,4 +149,14 @@ def test_threshold_is_not_on_a_cliff():
     are about to report is an artefact of a library default that nobody
     chose, and you should find that out now rather than in week 12.
     """
-    raise NotImplementedError("TODO 5c")
+    judgments = J.load_recorded()
+    if not judgments:
+        pytest.skip("no recorded judgments yet")
+
+    baseline = J.validate(judgments).rate
+    for threshold in (J.THRESHOLD - 0.05, J.THRESHOLD + 0.05):
+        agreement = J.validate(judgments, threshold)
+        assert abs(agreement.rate - baseline) <= 0.05, (
+            f"agreement changed from {baseline:.0%} to {agreement.rate:.0%} "
+            f"when threshold moved from {J.THRESHOLD:.2f} to {threshold:.2f}"
+        )

@@ -29,15 +29,16 @@ refine the rubric rather than the prompt.
 ### 1. Identity
 
 | Field | Value |
-| Criterion name | |
-| One sentence definition | |
-| Why this criterion and not a cheaper check | |
-| Scale | binary 0 or 1, or 0 / 0.5 / 1, or 1 to 5. State it and do not change it mid-semester. |
-| Pass threshold, and what happens on a fail | |
-| Judge model, and its family | |
-| Model under test, and its family | |
-| Different families? | yes / no, and if no, the reason |
-| Rubric version, date, and git commit | |
+|---|---|
+| Criterion name | Answer groundedness against a reference answer. |
+| One sentence definition | Check whether the answer addresses the question using only facts in the reference answer. |
+| Why this criterion and not a cheaper check | A simple check can compare numbers or words. It cannot judge whether the whole answer follows the reference. |
+| Scale | binary 0 or 1, or 0 / 0.5 / 1, or 1 to 5. State it and do not change it mid-semester. Our implemented GEval scale is 0 to 1, including decimal scores. The rows below describe low, middle, and high scores. |
+| Pass threshold, and what happens on a fail | At least 0.50 passes. A lower score fails the evaluation and needs review before the answer is accepted. |
+| Judge model, and its family | Local `qwen3:4b-instruct`, Qwen family. |
+| Model under test, and its family | This run scores the twelve supplied example answers. Their generating model is not recorded. My app uses `qwen2.5:7b`, also Qwen, but its actual answers were not scored in this judge run. |
+| Different families? | yes / no, and if no, the reason. For the supplied answers, the source model is unknown. The app and judge are both Qwen models chosen for the course. A different-family judge has not been tested. |
+| Rubric version, date, and git commit | Version 1, 2026-11-24. Base commit `f43bc42`, with uncommitted Week 10 changes. This rubric records the existing experiment after the run. |
 
 ### 2. What the judge sees
 
@@ -45,22 +46,23 @@ List exactly the fields passed to the judge, in order. Anything not on this
 list is invisible to it, and anything on it can bias it.
 
 | Field | Included | Note |
-| The question | | |
-| The answer under test | | |
-| The retrieved passages | | |
-| A reference answer | | omit for reference-free criteria |
-| The answer length | | see the verbosity control below |
-| Which model produced the answer | | almost always omit, it invites self preference |
+|---|---|---|
+| The question | Yes, first. | Passed as INPUT. |
+| The answer under test | Yes, second. | Passed as ACTUAL_OUTPUT. |
+| The retrieved passages | No. | This judge uses a reference answer. The separate RAGAS exercise uses passages. |
+| A reference answer | Yes, third. | omit for reference-free criteria. Our run passes EXPECTED_OUTPUT. |
+| The answer length | No separate length field. | see the verbosity control below. The judge can still see how long the answer is. |
+| Which model produced the answer | No. | almost always omit, it invites self preference. This information is not passed to our judge. |
 
 ### 3. Evaluation steps, as a procedure
 
 Write the steps a careful human would follow. Not a description of the
 criterion, a procedure. Three to five steps.
 
-1.
-2.
-3.
-4.
+1. Read the question and the reference answer.
+2. Check whether the actual answer addresses the question.
+3. Check each factual claim against the reference. Look for invented fees, deadlines, offices, or documents.
+4. Give a score from 0 to 1. Prefer a correct but incomplete answer over one with invented facts. Use 0.50 as the pass cutoff.
 
 ### 4. Anchors
 
@@ -68,24 +70,26 @@ One row per point on your scale. Each anchor gets a sentence and a real example
 from your own golden set, copied verbatim.
 
 | Score | What it looks like | Example from our set (case id) |
-| 1 | | |
-| 0.5 | | |
-| 0 | | |
+|---|---|---|
+| 1 | The answer addresses the question and all its facts match the reference. | L-01, supplied calibration set: "The residential parking vignette costs 60 EUR per year and is applied for at the Bierger-Center with proof of residence." Recorded score was 1.00. |
+| 0.5 | The answer gives correct information but leaves out part of what was asked. | L-05, supplied calibration set: "The vignette costs 60 EUR per year." This illustrates an incomplete answer. Its recorded score was 0.60, rather than exactly 0.50. |
+| 0 | The answer is unrelated to the question or gives no supported answer. | L-03, supplied calibration set: "The library is open on Saturday mornings." Recorded score was 0.00. |
 
 Edge cases, decided in advance so a disagreement is visible rather than silent:
 
-- A correct answer supported by a passage the model did not cite:
-- An answer that is right but longer than it needs to be:
-- A refusal on a case that could have been answered:
-- An answer that is partly right and partly invented:
+- A correct answer supported by a passage the model did not cite: It can pass if its facts match the reference. This criterion does not require citations.
+- An answer that is right but longer than it needs to be: Extra length earns no extra credit. Any added facts still need support from the reference.
+- A refusal on a case that could have been answered: Fail. L-07 refuses an answerable question and scored 0.20.
+- An answer that is partly right and partly invented: Fail if it adds an invented fee, deadline, office, or document. A correct part does not cancel out the invented part.
 
 ### 5. Bias controls
 
 | Bias | What it does | Control we applied | Evidence we recorded |
-| Position | Favours whichever answer is shown first in a pairwise comparison. Note that humans are the opposite way round and favour the last. | Every pair run twice with the order swapped, results kept only where both orderings agree | Disagreement count, out of N pairs |
-| Verbosity | Prefers the longer answer. Judges have preferred longer answers of about 100 words with factual errors over shorter correct ones of about 50. | Length cap stated in the rubric, and the rubric anchored on traceable evidence rather than on completeness | Correlation between answer length and score |
-| Self preference | Favours text the judge itself produced. Measured at about 10 percent for one model and about 25 percent for another. | Judge model from a different family from the model under test. Never let a model grade its own output on a gate. | Both model names, recorded next to every score |
-| Inconsistency | The same judge on the same input can score differently on a rerun. | Sampling settings fixed, worked examples in the prompt, judge scored on repeated runs like any other component | Score variance across K reruns on a fixed slice |
+|---|---|---|---|
+| Position | Favours whichever answer is shown first in a pairwise comparison. Note that humans are the opposite way round and favour the last. | Every pair run twice with the order swapped, results kept only where both orderings agree  Our run scores one answer against a reference. We did not run swapped pairs. | Disagreement count, out of N pairs  Our run: no order-swap disagreement count was measured. |
+| Verbosity | Prefers the longer answer. Judges have preferred longer answers of about 100 words with factual errors over shorter correct ones of about 50. | Length cap stated in the rubric, and the rubric anchored on traceable evidence rather than on completeness  Our criterion favours correct incomplete answers. No length cap was added. | Correlation between answer length and score  Our run: no length-score correlation was measured. |
+| Self preference | Favours text the judge itself produced. Measured at about 10 percent for one model and about 25 percent for another. | Judge model from a different family from the model under test. Never let a model grade its own output on a gate.  Our supplied answers have no recorded source model, so family separation was not verified. | Both model names, recorded next to every score  Our run records the judge model. The source model for these examples is unknown. |
+| Inconsistency | The same judge on the same input can score differently on a rerun. | Sampling settings fixed, worked examples in the prompt, judge scored on repeated runs like any other component  Our run used K=1 per case. We did not add worked examples or repeat cases to test score stability. | Score variance across K reruns on a fixed slice  Our run: variance was not measured. The threshold sweep reuses scores and does not test repeatability. |
 
 Note the cost of the second control against inconsistency. Including worked
 examples raised one reported judge's consistency from 65 percent to 77.5 percent, and quadrupled the prompt spend. Also note that higher consistency is not
@@ -94,14 +98,15 @@ higher accuracy: a judge can be consistently wrong.
 ### 6. Human validation, the control that is not optional
 
 | Field | Value |
-| Number of cases labelled by hand | at least 10 in the session, and write the figure down, because every number below has to be read against it |
-| Labels written before any judge score was seen? | yes / no. If no, the number below means nothing. |
-| Who labelled them | |
-| Plain agreement | |
-| Cohen's kappa | |
-| Cases where we disagreed | list the case ids |
-| For each disagreement, who was right | |
-| What we changed as a result | |
+|---|---|
+| Number of cases labelled by hand | at least 10 in the session, and write the figure down, because every number below has to be read against it. Our run used 12 supplied human-labelled cases. |
+| Labels written before any judge score was seen? | yes / no. If no, the number below means nothing. Yes for the supplied course labels. My own review of L-09 happened after the live run, and did not change those recorded labels. |
+| Who labelled them | The course supplied the twelve labels. I reviewed L-09 and would mark it fail because it leaves out the appointment requirement. |
+| Plain agreement | 12/12, or 100%, against the supplied labels at threshold 0.50. This is a small sample. |
+| Cohen's kappa | 1.00 on the same twelve cases. The judge and supplied labels matched on five passes and seven fails. |
+| Cases where we disagreed | list the case ids. My review disagreed with L-09. The judge had no disagreements with the original twelve labels at 0.50. |
+| For each disagreement, who was right | For L-09, I would choose fail. Someone could put their trash out without booking and it would not be collected. The course accepts it because the day is correct and nothing is invented. |
+| What we changed as a result | I recorded the disagreement in the decisions file. The original label and 0.50 cutoff were kept for the experiment. |
 
 If you agree with the judge on every labelled case, suspect the sample rather
 than celebrate the judge. It usually means every labelled case was easy.
@@ -118,11 +123,12 @@ humans can be checked against each other before the judge is.
 ### 7. Cost
 
 | Field | Value |
-| Judge calls per full regression run | cases x criteria x K |
-| Euros per full run | |
-| Seconds per full run | |
-| How often we intend to run it | on every commit, nightly, or before release |
-| What we would drop first if the budget halved | |
+|---|---|
+| Judge calls per full regression run | cases x criteria x K. Our run was 12 cases x 1 criterion x 1 repeat = 12 case evaluations. GEval can use multiple local model requests per case. |
+| Euros per full run | No hosted API fee. Electricity and hardware costs were not measured. |
+| Seconds per full run | 57.91 seconds summed across the twelve case timers on 2026-11-23. |
+| How often we intend to run it | on every commit, nightly, or before release. I would run the live judge before release or after model or criterion changes. Saved judgments can be checked on every commit. |
+| What we would drop first if the budget halved | Run live judging less often and reuse saved scores for routine checks. I would keep the free gates and the human validation. |
 
 ## Worked example, groundedness
 

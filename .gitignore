@@ -27,3 +27,6 @@ dist/
 
 #Files used for debugging in week 1 issue: modulenotfounderror: no module named project
 debug_path.py
+
+#I had to create a new env for week 10 ragas metrics lab because it needed older AI model, and my main venv already had a newer AI model installed. 
+.venv-ragas

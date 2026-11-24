@@ -164,7 +164,22 @@ def build_metric():
     runs for somebody who has not installed DeepEval yet. Block 1 needs no
     model at all and should not be blocked by a dependency it never uses.
     """
-    raise NotImplementedError("TODO 3a: build_metric")
+    from deepeval.metrics import GEval
+    from deepeval.models import OllamaModel
+    from deepeval.test_case import SingleTurnParams
+
+    return GEval(
+        name="Answer groundedness",
+        criteria=CRITERIA,
+        evaluation_params=[
+            SingleTurnParams.INPUT,
+            SingleTurnParams.ACTUAL_OUTPUT,
+            SingleTurnParams.EXPECTED_OUTPUT,
+        ],
+        model=OllamaModel(model=MODEL, base_url=ENDPOINT),
+        threshold=THRESHOLD,
+        async_mode=False,
+    )
 
 
 def judge_one(metric, case: Labelled) -> Judgment:
@@ -176,7 +191,23 @@ def judge_one(metric, case: Labelled) -> Judgment:
     the cost of a judged case against the cost of a deterministic check, and
     you cannot make that argument without the number.
     """
-    raise NotImplementedError("TODO 3b: judge_one")
+    from deepeval.test_case import LLMTestCase
+
+    test_case = LLMTestCase(
+        input=case.question,
+        actual_output=case.actual,
+        expected_output=case.expected,
+    )
+    start = time.perf_counter()
+    score = metric.measure(test_case)
+    seconds = time.perf_counter() - start
+    return Judgment(
+        case_id=case.case_id,
+        score=score,
+        verdict="pass" if score >= metric.threshold else "fail",
+        reason=metric.reason,
+        seconds=seconds,
+    )
 
 
 # --------------------------------------------------------------------------
@@ -202,7 +233,24 @@ def validate(judgments: dict[str, Judgment],
     and if your validate ignores it, every row of that sweep will be
     identical.
     """
-    raise NotImplementedError("TODO 4: validate")
+    if threshold is None:
+        threshold = THRESHOLD
+
+    rows = []
+    for case in LABELS:
+        judgment = judgments.get(case.case_id)
+        if judgment is None:
+            continue
+        rows.append({
+            "case_id": case.case_id,
+            "human": case.human,
+            "judge": "pass" if judgment.score >= threshold else "fail",
+            "score": judgment.score,
+            "why_human": case.why,
+            "why_judge": judgment.reason,
+            "seconds": judgment.seconds,
+        })
+    return Agreement(rows)
 
 
 def fixture_path() -> Path:
