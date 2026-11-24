@@ -559,7 +559,7 @@ Recall values are dense/keyword, both at k=5. The rank columns give the rank of 
 | Q11 | 1 | 5 | 1.00 / 1.00 | easy |
 | Q12 | unanswerable | — | — | unanswerable |
 
-The chunk sweep changed ranks for Q01, Q02, Q05, Q06, Q07, Q09, and Q11 when moving from size 300 to 600. From size 300 to 1200, ranks changed for Q02, Q03, Q05, Q06, Q09, and Q11. Sizes 300, 600, and 1200 produced 161, 84, and 57 chunks, respectively.
+The chunk sweep changed ranks for Q01, Q02, Q05, Q06, Q07, Q09, and Q11 when moving from size 300 to 600. From size 300 to 1200, ranks changed for Q02, Q03, Q05, Q06, Q09, and Q11. Sizes 300, 600, and 1200 produced 161, 84, and 57 chunks, respectively. These scores tell us whether retrieval found the right sections. We would need a separate check to see whether the app used them to write a correct answer.
 
 ### 4. Good pipeline, or easy task?
 
@@ -569,9 +569,11 @@ Ten of eleven answerable questions ranking first is evidence that this question 
 
 Question: Q05. Dense rank 22, keyword rank 7.
 
-Why it fails: Q05 combines two requests: declaring an arrival and applying for a resident parking vignette. The answer needs sections from two documents, and neither retriever ranked a gold section in its top five for the original combined query.
+Why it fails:
+Q05 combines two requests: declaring an arrival and applying for a resident parking vignette. The answer needs sections from two documents, and neither retriever ranked a gold section in its top five for the original combined query. The two sections are `RB-ARRIVEE::Deadline` and `RB-VIGNETTE::How to apply`.
 
-Would any chunk size fix it? No. Chunk size changes passage boundaries, but does not split the question into its two intents. Two focused queries retrieved both gold sections (section recall 1.00), at the cost of two embedding queries instead of one; the results also included extra sections, including from the superseded vignette document.
+Would any chunk size fix it?
+No. Chunk size changes passage boundaries, but does not split the question into its two intents. Both retrievers scored 0.00 recall@5 for Q05 at sizes 300, 600, and 1200. Two focused queries retrieved both gold sections (section recall 1.00), at the cost of two embedding queries instead of one; the results also included extra sections, including from the superseded vignette document.
 
 ### 6. The gold-set correction
 
@@ -827,7 +829,7 @@ To compare them fairly, I would use the same images and look at correct results,
 
 ## Homework
 
-- [x] One document of your own, photographed rather than rendered, run
+- [] One document of your own, photographed rather than rendered, run
       through the sweep, and where it sits relative to the five here
 
 I made my own invoice, `INV-006-LU`, using a template from this website. I filled in the details myself and took a picture of it from my laptop screen. I saved the photo as `labs/Starte_code_week09/images/INV-006.png`. There are some screen patterns visible in the photo, which could make the text harder to read. [Invoice template](https://i24app.com/lu/invoice-template)
@@ -848,7 +850,7 @@ My invoice passed all six variants. The model read the correct amounts every tim
 I compared this with my live sweep of the five given invoices from 2026-11-17, using the same model, temperature, and variants. My photo passed all variants, like `INV-002`, `INV-004`, and `INV-005`. `INV-001` refused when resized and rotated. `INV-003` refused with compression and blur, and gave a false alarm with rotation. My photo passed those changes too, so it handled them better than `INV-003` in this run. However, this is only one photo, so I would need to test more examples before saying it works well on other photographed invoices.
 
 
-- [x] `code_triage` wired to the week 8 approval gate, so a failed check
+- [] `code_triage` wired to the week 8 approval gate, so a failed check
       routes to a human instead of printing a verdict
 
 I copied `vision.py`, `perturb.py`, and `checks.py` into `app/`. I also added `code_triage` to `app/checks.py`. `app/pipeline.py` already had the connection to the week 8 gate. Now it asks a person when `code_triage` says the invoice needs approval.
@@ -864,7 +866,7 @@ I copied `vision.py`, `perturb.py`, and `checks.py` into `app/`. I also added `c
 The runs are saved in `artifacts/traces.jsonl`. We also tested a deliberately wrong reading. It had net EUR 700.00, VAT EUR 119.00, and total EUR 800.00. The amounts did not add up. The check failed and the gate opened. We supplied these values in a separate test. The live runs above used the model to read the images.
 
 
-- [x] One paragraph: what fires your gate, and why it is not model
+- [] One paragraph: what fires your gate, and why it is not model
       confidence
 
 The gate opens if a check fails, the total cannot be read, or the total is above EUR 1,000. `code_triage` applies these rules. For example, `INV-001` passed the checks but its total was above the limit, so it asked for my approval. Python uses the check results and the amount to decide. We do not use model confidence. The model could sound sure and still read a number wrong or follow the note on `INV-005`. The gate shows the values and why it opened. A person can approve, reject, or edit them. With `--unattended`, it returns timeout and holds the invoice.
